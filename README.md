@@ -1,7 +1,7 @@
 # Building Game Engines Monorepo
 
 * *Yuxiang Cao* 
-* *yː3ɕaŋ2 tsʰau2*
+* *Yu xiang Ca0*
 
 ## Read the FAQ
 
