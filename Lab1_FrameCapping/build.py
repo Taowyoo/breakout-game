@@ -35,10 +35,10 @@ elif platform.system()=="Windows":
 compileString=COMPILER+" "+ARGUMENTS+" -o "+EXECUTABLE+" "+" "+INCLUDE_DIR+" "+SOURCE+" "+LIBRARIES
 # Print out the compile string
 # This is the command you can type
-print "============v (Command running on terminal) v==========================="
-print "Compilng on: "+platform.system()
-print compileString
-print "========================================================================"
+print("============v (Command running on terminal) v===========================")
+print("Compilng on: "+platform.system())
+print(compileString)
+print("========================================================================")
 # Run our command
 os.system(compileString)
 # ========================= Building the Executable ========================== #
