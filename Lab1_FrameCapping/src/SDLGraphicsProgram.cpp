@@ -4,13 +4,15 @@
 #include "Rectangle.h"
 
 // Try toggling this number!
-#define BLOCKS 567
+#define BLOCKS 600
 
 // Fixed FPS variables
 const Uint32 SCREEN_60FPS = 60;
 const Uint32 SCREEN_30FPS = 30;
 const Uint32 SCREEN_TICKS_PER_FRAME_60 = 1000 / SCREEN_60FPS;
 const Uint32 SCREEN_TICKS_PER_FRAME_30 = 1000 / SCREEN_30FPS;
+// Fixed update speed
+const Uint32 TICKS_PER_UPDATE = 10;
 
 // Create our list of rectangles!
 Rectangle r[BLOCKS];
@@ -120,8 +122,10 @@ void SDLGraphicsProgram::update() {
   for (int i = 0; i < BLOCKS; i++) {
     r[i].update(screenWidth, screenHeight);
   }
+  std::string text = "FPS: " + std::to_string(avgFPS) + ", Press SPACE to change FPS between 60 & 30";
+
   // Update FPS Text Texture
-  if(!gFPSTextTexture.loadFromRenderedText( "FPS: " + std::to_string(avgFPS), textColor, gRenderer, gFont))
+  if(!gFPSTextTexture.loadFromRenderedText(text, textColor, gRenderer, gFont))
   {
     SDL_LogError(SDL_LOG_CATEGORY_ERROR , "Unable to render FPS texture!\n" );
   }
@@ -134,7 +138,7 @@ void SDLGraphicsProgram::render() {
     r[i].render(getSDLRenderer());
   }
   //Render textures
-  gFPSTextTexture.render(0, 0, gRenderer);
+  gFPSTextTexture.render(( screenWidth - gFPSTextTexture.getWidth() ) / 2, ( screenHeight - gFPSTextTexture.getHeight() ) / 2, gRenderer);
   //Update screen
   SDL_RenderPresent(gRenderer);
 }
@@ -155,16 +159,29 @@ void SDLGraphicsProgram::loop() {
   Uint32 fixedTicks = SCREEN_TICKS_PER_FRAME_60;
   SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,"Please press SPACE key to change FPS between 60 & 30!");
 
+  
+  
+  // Update timer
+  LTimer updateTimer;
+  Uint32 previous = 0;
+  Uint32 lag = 0;
+  updateTimer.start();
   // Start counting frames per second
   Uint32 countedFrames = 0;
   fpsTimer.start();
-
+  // Start update timer
   // Enable text input
   SDL_StartTextInput();
   // While application is running
   while (!quit) {
     //Start cap timer
     capTimer.start();
+
+    Uint32 current = updateTimer.getTicks();
+    Uint32 elapsed = current - previous;
+    previous = current;
+    lag += elapsed;
+
     // Handle events on queue
     while (SDL_PollEvent(&e) != 0) {
       // User posts an event to quit
@@ -191,14 +208,19 @@ void SDLGraphicsProgram::loop() {
     {
       // Update average FPS
       avgFPS = countedFrames / ( mSecPassed/ 1000.f);
-      SDL_LogInfo(SDL_LOG_CATEGORY_APPLICATION,"FPS: %u",avgFPS);
+      fprintf(stderr, "\rFPS: %u\r",avgFPS);
       countedFrames = 0;
       // Reset timer
       fpsTimer.start();
     }
 
     // Update our scene
-    update();
+    while (lag >= TICKS_PER_UPDATE)
+    {
+      update();
+      lag -= TICKS_PER_UPDATE;
+    }
+
     // Render using OpenGL
     render();
     // Update screen of our specified window
