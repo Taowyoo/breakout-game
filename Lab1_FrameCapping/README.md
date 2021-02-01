@@ -12,7 +12,7 @@
 
 - How many hours did it take you to complete this lab?
   
-  About 5 hours.
+  About 7 hours.
  
 - Did you collaborate with any other students/TAs/Professors?
   
@@ -63,7 +63,7 @@ Good luck!
 ### Compiling and running the support code
 
 * Linux, Mac, and Windows (Mysys)
-  * Type: `python build.py`
+  * Type: `python build.py` or `python3 build.py`
   * Then : `./lab` or `./lab.exe`
   
 ## Part 2 - SDL Abstraction
