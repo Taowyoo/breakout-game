@@ -71,7 +71,7 @@ SDLGraphicsProgram::SDLGraphicsProgram(int w, int h)
                       << TTF_GetError() << "\n";
           success = false;
         } else {
-          gFont = TTF_OpenFont("lazy.ttf", 28);
+          gFont = TTF_OpenFont("PixelGameFont.ttf", 28);
           if (gFont == NULL) {
             errorStream << "Failed to load lazy font! SDL_ttf Error: "
                         << TTF_GetError() << "\n";
