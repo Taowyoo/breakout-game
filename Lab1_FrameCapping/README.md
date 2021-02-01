@@ -11,12 +11,33 @@
 ## Modify this section
 
 - How many hours did it take you to complete this lab?
+  
+  About 5 hours.
+ 
 - Did you collaborate with any other students/TAs/Professors?
+  
+  No
+
 - Did you use any external resources? (Cite them below)
-  - tbd
-  - tbd
-- (Optional) What was your favorite part of the lab?
-- (Optional) How would you improve the lab?
+  - Refer to the following code implementation：
+    - Codes in Support folder
+    - [SDL Wiki](https://wiki.libsdl.org/)
+    - [Game Loop](https://gameprogrammingpatterns.com/game-loop.html)
+    - [Beginning Game Programming v2.0 - True Type Fonts](http://lazyfoo.net/tutorials/SDL/16_true_type_fonts/index.php)
+    - [Beginning Game Programming v2.0 - Timing](https://lazyfoo.net/tutorials/SDL/22_timing/index.php)
+    - [Beginning Game Programming v2.0 - Advanced Timers](http://lazyfoo.net/tutorials/SDL/23_advanced_timers/index.php)
+    - [Beginning Game Programming v2.0 - Calculating Frame Rate
+  ](http://lazyfoo.net/tutorials/SDL/24_calculating_frame_rate/index.php)
+    - [Beginning Game Programming v2.0 - Capping Frame Rate](http://lazyfoo.net/tutorials/SDL/25_capping_frame_rate/index.php)
+
+- What was your favorite part of the lab?
+
+  1. First is implementing different ways of Game loop by reading [Game Loop](https://gameprogrammingpatterns.com/game-loop.html)
+  2. Compare [my first implementation](https://github.com/Spring21BuildingGameEngines/monorepo-Taowyoo/tree/lab01_v1) with [Beginning Game Programming v2.0](http://lazyfoo.net/tutorials/SDL)
+
+- How would you improve the lab?
+
+  I think the lab build system may change to CMake.
 
 ## Logistics
 
@@ -51,8 +72,10 @@ Good luck!
 
 Answer: 
 
-1. *fill this in*
-2. *fill this in*
+1. All functions are separate. There should be some function overloading. But this is a C library. So maybe we need a C++ abstraction layer?  
+2. I may need some feature about asynchronous function.
+3. Still lack abstraction of some 3d staff.
+4. We could add some standard object class.
 
 
 ## Helpful Resources
@@ -84,12 +107,11 @@ What is that, you finished Early? Did you enjoy this lab? Here are some (optiona
 
 - Check out some more SDL tutorials
 
+  Awesome, I am doing that!
+
 ## Found a bug?
 
 If you found a mistake (big or small, including spelling mistakes) in this lab, kindly send me an e-mail. It is not seen as nitpicky, but appreciated! (Or rather, future generations of students will appreciate it!)
 
 - Fun fact: The famous computer scientist Donald Knuth would pay folks one $2.56 for errors in his published works. [[source](https://en.wikipedia.org/wiki/Knuth_reward_check)]
 - Unfortunately, there is no monetary reward in this course :)
-
-
-
