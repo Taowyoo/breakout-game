@@ -1,5 +1,6 @@
 # Executable files
-Lab1_FrameCapping/lab
+**/lab
+*.exe
 
 # Visual Studio Code files
 .vscode/*
