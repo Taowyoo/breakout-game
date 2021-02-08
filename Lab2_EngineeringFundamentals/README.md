@@ -25,6 +25,9 @@
 
 - (Optional) How would you improve the lab?
 
+- Running environment of my implementation:
+
+  Linux, Ubuntu 20.04 with **SDL2,SDL2_ttf,SDL2_mixer,SDL2_image**
 
 
 ## Logistics
