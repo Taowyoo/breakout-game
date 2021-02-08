@@ -9,14 +9,23 @@
 ## Modify this section
 
 - How many hours did it take you to complete this lab?
+
+  I used about 6 ~ 7 hours.
+
 - Did you collaborate with any other students/TAs/Professors?
+
+  No
+
 - Did you use any external resources? (Cite them below)
-  - tbd
-  - tbd
+  - Referred to lots of code on https://austinmorlan.com/posts/pong_clone/.
+  - Used a sound effect from https://soundbible.com/1003-Ta-Da.html.
 - (Optional) What was your favorite part of the lab?
+
+  Learning and reading other's thinking and ideal of implementing the Pong Game.
+
 - (Optional) How would you improve the lab?
 
-https://soundbible.com/1003-Ta-Da.html
+
 
 ## Logistics
 
@@ -82,7 +91,9 @@ Some additional notes:
 
 List one good coding style practice you have learned (Specify if in another language other than C++):
 
-*edit here to add your best coding practice*
+I learnt the [Google C++ Style Guide](https://google.github.io/styleguide/cppguide.html):
+- I learnt that you do not need to always deliver the usage or meaning through the variable name. You have to consider about the scope and contexts of one variable so that you could use a aariable name of appropriate length.
+- When use `#ifndef` combone to protect each header file. You also have to include the path of it in a project to aviod same header file from different folders. 
 
 # Part 4 - Pong
 
