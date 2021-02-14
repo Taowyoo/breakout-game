@@ -5,7 +5,7 @@
 #define CHARACTERS 50
 
 // Global array to create our characters
-ResourceManager characters[CHARACTERS];
+Character characters[CHARACTERS];
 
 // Initialization function
 // Returns a true or false value based on successful completion of setup.
@@ -59,7 +59,8 @@ SDLGraphicsProgram::SDLGraphicsProgram(int w, int h):screenWidth(w),screenHeight
             yColumn+=offset;
             sum =0;
         }
-        characters[i].init(sum,yColumn,getSDLRenderer());
+        // TODO: Update to init with texture from ResourceManager
+        // characters[i].init(sum,yColumn,getSDLRenderer());
     }
 
   // If initialization did not work, then print out a list of errors in the constructor.
