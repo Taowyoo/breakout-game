@@ -52,6 +52,7 @@ void Character::update(int x, int y, int frame) {
 }
 
 void Character::render(SDL_Renderer* ren) {
+  
   texture_->render(xPos_, yPos_, ren, &src_, &dest_);
 }
 

@@ -70,12 +70,13 @@ void BaseTexture::render(int x, int y, SDL_Renderer* renderer, SDL_Rect* src,
                          SDL_Rect* dst, double angle, SDL_Point* center,
                          SDL_RendererFlip flip) {
   // Set rendering space and render to screen
+  SDL_Rect dest = {x, y, width_, height_};
   if (dst == nullptr) {
-    SDL_Rect dest = {x, y, width_, height_};
-    SDL_RenderCopyEx(renderer, texture_, src, &dest, angle, center, flip);
-  } else {
-    SDL_RenderCopyEx(renderer, texture_, src, dst, angle, center, flip);
+    dst = &dest;
   }
+  SDL_Log("Render from {%d,%d,%d,%d} to {%d,%d,%d,%d}\n",src->x,src->y,src->w,src->h,dst->x,dst->y,dst->w,dst->h);
+  // SDL_RenderCopyEx(renderer, texture_, src, dst, angle, center, flip);
+  SDL_RenderCopy(renderer, texture_, src, dst);
 }
 
 void BaseTexture::setWidth(int w) { width_ = w; }
