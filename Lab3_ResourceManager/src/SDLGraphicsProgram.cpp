@@ -119,7 +119,7 @@ void SDLGraphicsProgram::render() {
   for (int i = 0; i < CHARACTERS; i++) {
     characters[i].render(getSDLRenderer());
   }
-
+  
   SDL_RenderPresent(gRenderer);
 }
 
