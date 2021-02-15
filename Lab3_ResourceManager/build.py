@@ -3,7 +3,7 @@ import os
 import platform
 
 # (1)==================== COMMON CONFIGURATION OPTIONS ======================= #
-COMPILER="clang++ -std=c++17"   # The compiler we want to use 
+COMPILER="clang++ -g -std=c++17"   # The compiler we want to use 
                                 #(You may try g++ if you have trouble)
 SOURCE="./src/*.cpp"    # Where the source code lives
 EXECUTABLE="lab"        # Name of the final executable
@@ -18,7 +18,7 @@ LIBRARIES=""            # What libraries do we want to include
 if platform.system()=="Linux":
     ARGUMENTS="-D LINUX" # -D is a #define sent to preprocessor
     INCLUDE_DIR="-I ./include/ -I ./../common/thirdparty/glm/ -I /usr/include/SDL2"
-    LIBRARIES="-lSDL2 -ldl"
+    LIBRARIES="-lSDL2 -lSDL2_image -ldl"
 elif platform.system()=="Darwin":
     ARGUMENTS="-D MAC" # -D is a #define sent to the preprocessor.
     INCLUDE_DIR="-I ./include/ -I/Library/Frameworks/SDL2.framework/Headers -I./../common/thirdparty/old/glm"
