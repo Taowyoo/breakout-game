@@ -12,11 +12,11 @@
 
 - How many hours did it take you to complete this lab?
   
-  10 hrs.
+  10 hrs. Finished code only tested under Ubuntu 20.04 and Ubuntu 18.04(WSL2 in Windows10).
 
 - Did you collaborate with any other students/TAs/Professors?
   
-  No
+  No.
   
 - Did you use any external resources? (Cite them below)
   - I referred to some ideals and design from [A Resource Manager for Game Assets](https://www.gamedev.net/articles/programming/general-and-gameplay-programming/a-resource-manager-for-game-assets-r3807/) and [Adding a Resource Management Class](http://eangogamedevelopment.blogspot.com/2017/01/part-21-completing-game-menu.html)
