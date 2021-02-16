@@ -30,6 +30,8 @@ class ResourceManager {
   std::unordered_map<ResName, T*> resMap_;
 
   ResourceManager() : name_("Not Set"), cfgFilePath_("") {}
+  ResourceManager(const ResourceManager& other) = delete;
+  ResourceManager& operator=(const ResourceManager& other) = delete;
 
  public:
   static ResourceManager& getInstance() {
@@ -63,18 +65,17 @@ class ResourceManager {
         useConfig_ = true;
         return;
       }
-      SDL_Log( "Fail to open %s!", cfgFilePath.c_str());
+      SDL_Log("Fail to open %s!", cfgFilePath.c_str());
     }
-    SDL_Log( "Succeed to init ResourceManager!");
+    SDL_Log("Succeed to init ResourceManager!");
   }
 
   bool startManager(bool preload = false) {
     if (useConfig_ && preload) {
       for (auto const& kv : fileMap_) {
         if (!AddResource(kv.first, kv.second)) {
-          SDL_Log(
-                       "Fail load resources from config file: '%s'!",
-                       cfgFilePath_.c_str());
+          SDL_Log("Fail load resources from config file: '%s'!",
+                  cfgFilePath_.c_str());
           return false;
         }
       }
@@ -93,9 +94,8 @@ class ResourceManager {
     // find in fileMap_
     auto it = fileMap_.find(resName);
     if (it == fileMap_.end()) {
-      SDL_Log(
-          "Fail to add %s, resource does not exist in config file: '%s'!",
-          resName.c_str(), cfgFilePath_.c_str());
+      SDL_Log("Fail to add %s, resource does not exist in config file: '%s'!",
+              resName.c_str(), cfgFilePath_.c_str());
       return false;
     }
     return AddResource(resName, it->second);
@@ -116,11 +116,11 @@ class ResourceManager {
       SDL_Log("Fail to add %s, duplicate resource name!", resName.c_str());
       return false;
     }
-    fileMap_.emplace(resName,resPath);
+    fileMap_.emplace(resName, resPath);
     T* newRes = new T(resName);
     newRes->loadFromFile(resPath, renderer_);
     resMap_.emplace(resName, newRes);
-    SDL_Log("Added %s from %s.", resName.c_str(),resPath.c_str());
+    SDL_Log("Added %s from %s.", resName.c_str(), resPath.c_str());
     return true;
   }
 
@@ -131,7 +131,6 @@ class ResourceManager {
       return nullptr;
     }
     T* ret = (*it).second;
-    SDL_Log("Loading %s size:(%d,%d)...", resName.c_str(),ret->getWidth(),ret->getHeight());
     return ret;
   }
 
@@ -142,7 +141,7 @@ class ResourceManager {
       resMap_.erase(it);
       return true;
     }
-    SDL_Log( "Resource to remove does not exist!");
+    SDL_Log("Resource to remove does not exist!");
     return false;
   }
 

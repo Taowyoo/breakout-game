@@ -20,7 +20,7 @@ bool BaseTexture::loadFromFile(std::string path, SDL_Renderer* renderer) {
     SDL_Log("Unable to load image %s! SDL_image Error: %s", path.c_str(),
             IMG_GetError());
   } else {
-    SDL_Log("Loaded %s",path.c_str());
+    SDL_Log("Loaded %s", path.c_str());
     // Create texture from surface pixels
     newTexture = SDL_CreateTextureFromSurface(renderer, loadedSurface);
     if (newTexture == nullptr) {
@@ -74,9 +74,7 @@ void BaseTexture::render(int x, int y, SDL_Renderer* renderer, SDL_Rect* src,
   if (dst == nullptr) {
     dst = &dest;
   }
-  SDL_Log("Render from {%d,%d,%d,%d} to {%d,%d,%d,%d}\n",src->x,src->y,src->w,src->h,dst->x,dst->y,dst->w,dst->h);
-  // SDL_RenderCopyEx(renderer, texture_, src, dst, angle, center, flip);
-  SDL_RenderCopy(renderer, texture_, src, dst);
+  SDL_RenderCopyEx(renderer, texture_, src, dst, angle, center, flip);
 }
 
 void BaseTexture::setWidth(int w) { width_ = w; }
