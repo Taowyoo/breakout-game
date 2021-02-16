@@ -53,9 +53,9 @@ SDLGraphicsProgram::SDLGraphicsProgram(int w, int h)
     }
   }
   // Init ResourceManager
-  yx::ResourceManager<yx::BaseTexture> resourceManager =
-      yx::ResourceManager<yx::BaseTexture>::getInstance();
+  auto& resourceManager = yx::ResourceManager<yx::BaseTexture>::getInstance();
   resourceManager.init("ResourceManager", "", gRenderer);
+  resourceManager.startManager();
   resourceManager.AddResource("SpriteBmp", "sprite.bmp");
   // Setup our characters
   // Remember, this can only be done after SDL has been
@@ -78,7 +78,7 @@ SDLGraphicsProgram::SDLGraphicsProgram(int w, int h)
   if (!success) {
     errorStream << "Failed to initialize!\n";
     std::string errors = errorStream.str();
-    SDL_Log("%s",errors.c_str());
+    SDL_Log("%s", errors.c_str());
   } else {
     SDL_Log("No SDL errors Detected in during init\n\n");
   }
@@ -119,7 +119,7 @@ void SDLGraphicsProgram::render() {
   for (int i = 0; i < CHARACTERS; i++) {
     characters[i].render(getSDLRenderer());
   }
-  
+
   SDL_RenderPresent(gRenderer);
 }
 
