@@ -11,12 +11,17 @@
 ## Modify this section
 
 - How many hours did it take you to complete this lab?
+  
+  10 hrs.
+
 - Did you collaborate with any other students/TAs/Professors?
+  
+  No
+  
 - Did you use any external resources? (Cite them below)
-  - tbd
-  - tbd
-- (Optional) What was your favorite part of the lab?
-- (Optional) How would you improve the lab?
+  - I referred to some ideals and design from [A Resource Manager for Game Assets](https://www.gamedev.net/articles/programming/general-and-gameplay-programming/a-resource-manager-for-game-assets-r3807/) and [Adding a Resource Management Class](http://eangogamedevelopment.blogspot.com/2017/01/part-21-completing-game-menu.html)
+- What was your favorite part of the lab?
+  Learn from other's design online.
 
 ## Logistics
 

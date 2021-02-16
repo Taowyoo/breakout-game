@@ -4,18 +4,29 @@ Read [Horde3D](http://www.horde3d.org/docs/html/_usageguide.html)'s section on R
 
 1. What are some pros and cons to having a single resource manager for all of your resources (i.e. game assets)?
 
-**Pro**: *Edit your answer here*
+    **Pro**:
 
-**Con**: *Edit your answer here*
+    - No more duplicate loading/reading of files/assets.
+    - All related codes locate at one place, easy to read and understand.
+    - There will be no dupilcate code.
+    - One place to dealing with all assets related memory management.
+
+
+    **Con**:
+
+    - A single resource manager may results a bloated and complex codebase, as the manager has to deal with various types of assets.
+    - As all logic in one single resource manager, it may be hard to refactor or extend.
 
 
 2. What are some advantages of having a 'virtualized resource in Horde3D?
 
-**Advantage 1**: *Edit your answer here*
+    **Advantage 1**:
 
-**Advantage 2**: *Edit your answer here*
+    - It gives high freedom to usr on how to loading assets but also maintains an unified data structure in the engine. On the other hand, it enables the engine become platform independent.
 
+    **Advantage 2**:
 
+    - Enable engine to use some kind of dynamic assets which generated at realtime.
 
 
 > (Text archived here)
