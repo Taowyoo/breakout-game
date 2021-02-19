@@ -13,7 +13,7 @@
 // Note that your path may be different depending on where you intalled things
 //
 //
-#if defined(LINUX) || defined(MINGW)
+#if defined(LINUX) || defined(MINGW) || defined(__linux__)
     #include <SDL2/SDL.h>
 #else // This works for Mac
     #include <SDL.h>
