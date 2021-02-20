@@ -18,7 +18,7 @@
 #include "Ball.h"
 #include "Common.h"
 #include "Paddle.h"
-#include "PlayerScore.h"
+#include "Text.h"
 
 class PongGame {
   enum Winner {
@@ -51,9 +51,9 @@ class PongGame {
   int playerOneScore = 0;
   int playerTwoScore = 0;
   // Ponters of objects in game
-  PlayerScore* playerOneScoreText = nullptr;
-  PlayerScore* playerTwoScoreText = nullptr;
-  PlayerScore* winText = nullptr;
+  Text* playerOneScoreText = nullptr;
+  Text* playerTwoScoreText = nullptr;
+  Text* winText = nullptr;
   Ball* ball = nullptr;
   Paddle* paddleOne = nullptr;
   Paddle* paddleTwo = nullptr;

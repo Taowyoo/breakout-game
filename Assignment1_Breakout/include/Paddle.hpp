@@ -10,38 +10,34 @@
 #endif
 
 #include "Common.h"
+#include "Rectangle.hpp"
+#include "TinyMath.hpp"
 
-class Paddle {
+class Paddle : public Rectangle {
  public:
-  Paddle(Vec2 position, Vec2 velocity)
-      : position(position), velocity(velocity) {
-    rect.x = static_cast<int>(position.x);
-    rect.y = static_cast<int>(position.y);
-    rect.w = PADDLE_WIDTH;
-    rect.h = PADDLE_HEIGHT;
+  Paddle(Vector2D position, Vector2D velocity)
+      : Rectangle(position, PADDLE_WIDTH, PADDLE_HEIGHT), velocity(velocity) {
+    rect.y = std::min(rect.y, WINDOW_HEIGHT - rect.h);
   }
 
   void Update(float dt) {
     position += velocity * dt;
 
-    if (position.y < 0) {
+    if (position.x < GAME_SCENE_LEFT) {
       // Restrict to top of the screen
-      position.y = 0;
-    } else if (position.y > (WINDOW_HEIGHT - PADDLE_HEIGHT)) {
+      position.x = GAME_SCENE_LEFT;
+    } else if (position.x > GAME_SCENE_RIGHT - PADDLE_WIDTH) {
       // Restrict to bottom of the screen
-      position.y = WINDOW_HEIGHT - PADDLE_HEIGHT;
+      position.x = GAME_SCENE_RIGHT - PADDLE_WIDTH;
     }
   }
 
   void Draw(SDL_Renderer* renderer) {
-    rect.y = static_cast<int>(position.y);
-
+    rect.x = static_cast<int>(position.x);
     SDL_RenderFillRect(renderer, &rect);
   }
 
-  Vec2 position;
-  Vec2 velocity;
-  SDL_Rect rect{};
+  Vector2D velocity;
 };
 
 #endif  // PADDLE_H_

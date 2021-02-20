@@ -1,7 +1,7 @@
 #ifndef RESOURCE_MANAGER_HPP
 #define RESOURCE_MANAGER_HPP
 
-#if defined(LINUX) || defined(MINGW)
+#if defined(LINUX) || defined(MINGW) || defined(__linux__)
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_log.h>
 #else  // This works for Mac

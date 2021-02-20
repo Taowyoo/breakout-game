@@ -5,6 +5,7 @@
 
 // Forward references of each of the structs
 struct Vector3D;
+struct Vector2D;
 struct Matrix3D;
 
 // Vector3D performs vector operations with 3-dimensions
@@ -145,6 +146,15 @@ inline Vector3D CrossProduct(const Vector3D& a, const Vector3D& b) {
   return vec;
 }
 
+// Vector2D performs vector operations with 2-dimensions
+// The purpose of this class is primarily for 2D graphics
+// applications.
+struct Vector2D : public Vector3D {
+  Vector2D() = default;
+
+  Vector2D(float a, float b) : Vector3D(a, b, 0) {}
+};
+
 // Matrix 3D represents 3x3 matrices in Math
 struct Matrix3D {
  private:
@@ -202,9 +212,7 @@ struct Matrix3D {
            n[1][0] == m[1][0] && n[1][1] == m[1][1] && n[1][2] == m[1][2] &&
            n[2][0] == m[2][0] && n[2][1] == m[2][1] && n[2][2] == m[2][2];
   }
-  bool operator!=(const Matrix3D& m) const {
-    return !(this->operator==(m));
-  }
+  bool operator!=(const Matrix3D& m) const { return !(this->operator==(m)); }
 
   // Return a column from a matrix as a vector.
   Vector3D column(int j) const {
@@ -214,7 +222,7 @@ struct Matrix3D {
 };
 
 // Matrix Multiplication
-Matrix3D operator*(const Matrix3D& A, const Matrix3D& B) {
+inline Matrix3D operator*(const Matrix3D& A, const Matrix3D& B) {
   Matrix3D n;
   n[0][0] = Dot(A[0], B.column(0));
   n[0][1] = Dot(A[0], B.column(1));
@@ -229,7 +237,7 @@ Matrix3D operator*(const Matrix3D& A, const Matrix3D& B) {
 }
 
 // Matrix multiply by a vector
-Vector3D operator*(const Matrix3D& M, const Vector3D& v) {
+inline Vector3D operator*(const Matrix3D& M, const Vector3D& v) {
   Vector3D vec;
   vec[0] = Dot(M[0], v);
   vec[1] = Dot(M[1], v);
