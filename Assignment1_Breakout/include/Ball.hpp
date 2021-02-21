@@ -36,9 +36,9 @@ class Ball {
     position.y += contact.penetration;
     velocity.y = -velocity.y;
 
-    if (contact.type == CollisionType::Top) {
+    if (contact.type == CollisionType::Left) {
       velocity.x = -.75f * BALL_SPEED;
-    } else if (contact.type == CollisionType::Bottom) {
+    } else if (contact.type == CollisionType::Right) {
       velocity.x = 0.75f * BALL_SPEED;
     }
   }
@@ -56,7 +56,17 @@ class Ball {
       velocity.x = -velocity.x;
     }
   }
-
+  void CollideWithBrick(Contact const& contact) {
+    if (contact.type == CollisionType::Top ||
+        contact.type == CollisionType::Bottom) {
+      position.y += contact.penetration;
+      velocity.y = -velocity.y;
+    } else if (contact.type == CollisionType::Left ||
+               contact.type == CollisionType::Right) {
+      position.x += contact.penetration;
+      velocity.x = -velocity.x;
+    }
+  }
   Vector2D position;
   Vector2D velocity;
   SDL_Rect rect{};

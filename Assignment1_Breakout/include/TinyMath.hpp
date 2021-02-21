@@ -155,6 +155,27 @@ struct Vector2D : public Vector3D {
   Vector2D(float a, float b) : Vector3D(a, b, 0) {}
 };
 
+enum Direction { UP, RIGHT, DOWN, LEFT };
+
+inline Direction VectorDirectionSDL(Vector2D target) {
+  Vector2D compass[] = {
+      Vector2D(0.0f, -1.0f),  // up
+      Vector2D(-1.0f, 0.0f),  // right
+      Vector2D(0.0f, 1.0f),   // down
+      Vector2D(1.0f, 0.0f)    // left
+  };
+  float max = 0.0f;
+  unsigned int best_match = -1;
+  for (unsigned int i = 0; i < 4; i++) {
+    float dot_product = Dot(Normalize(target), compass[i]);
+    if (dot_product > max) {
+      max = dot_product;
+      best_match = i;
+    }
+  }
+  return (Direction)best_match;
+}
+
 // Matrix 3D represents 3x3 matrices in Math
 struct Matrix3D {
  private:

@@ -19,8 +19,12 @@
 class Text {
  public:
   Text(Vector2D position, SDL_Renderer* renderer, TTF_Font* font)
-      : renderer(renderer), font(font), color{0xFF, 0xFF, 0xFF, 0xFF} {
-    surface = TTF_RenderText_Solid(font, "", {0xFF, 0xFF, 0xFF, 0xFF});
+      : renderer(renderer),
+        font(font),
+        color{0xFF, 0xFF, 0xFF, 0xFF},
+        lastText("") {
+    surface =
+        TTF_RenderText_Solid(font, lastText.c_str(), {0xFF, 0xFF, 0xFF, 0xFF});
     texture = SDL_CreateTextureFromSurface(renderer, surface);
 
     int width, height;
@@ -38,33 +42,47 @@ class Text {
   }
 
   void SetText(const std::string& str) {
-    SDL_FreeSurface(surface);
-    SDL_DestroyTexture(texture);
+    if (str != lastText) {
+      SDL_FreeSurface(surface);
+      SDL_DestroyTexture(texture);
 
-    surface = TTF_RenderText_Solid(font, str.c_str(), color);
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
+      surface = TTF_RenderText_Solid(font, str.c_str(), color);
+      texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-    int width, height;
-    SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-    rect.w = width;
-    rect.h = height;
+      lastText = str;
+      int width, height;
+      SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+      rect.w = width;
+      rect.h = height;
+    }
   }
-
   void Draw() { SDL_RenderCopy(renderer, texture, nullptr, &rect); }
-
+  void SetPosition(const Vector2D& position) {
+    SetPosition(position.x, position.y);
+  }
+  void SetPosition(int x, int y) {
+    rect.x = x;
+    rect.y = y;
+  }
   void SetColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
     color.r = r;
     color.g = g;
     color.b = b;
     color.a = a;
   }
-
+  void SetCenterPosition(int x, int y) {
+    rect.x = x - rect.w / 2;
+    rect.y = y - rect.h / 2;
+  }
+  int getWidth() const { return rect.w; }
+  int getHeight() const { return rect.h; }
   SDL_Renderer* renderer;
   TTF_Font* font;
   SDL_Surface* surface{};
   SDL_Texture* texture{};
   SDL_Rect rect{};
   SDL_Color color{};
+  std::string lastText;
 };
 
 #endif  // TEXT_H_

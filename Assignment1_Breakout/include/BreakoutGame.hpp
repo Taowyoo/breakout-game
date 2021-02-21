@@ -39,6 +39,7 @@
 #include "Brick.hpp"
 #include "Common.h"
 #include "Paddle.hpp"
+#include "Player.hpp"
 #include "Text.hpp"
 #include "Wall.hpp"
 
@@ -50,7 +51,7 @@ class BreakoutGame {
   // Desctructor
   ~BreakoutGame();
   // Per frame update
-  void update();
+  void update(float dt);
   // Renders shapes to the screen
   void render();
   // loop that runs forever
@@ -61,24 +62,35 @@ class BreakoutGame {
   SDL_Renderer* getSDLRenderer();
 
  private:
+  // Game state
+  GameState gameState;
+  // Button state
+  bool buttons[2]{};
   // Screen dimension constants
   int screenHeight;
   int screenWidth;
+  int level;
   // The window we'll be rendering to
   SDL_Window* gWindow;
   // SDL Renderer
   SDL_Renderer* gRenderer = NULL;
   // Text font
   TTF_Font* font_;
+  Player player;
   Wall wallLeft;
   Wall wallRight;
   Ball ball;
-  // TODO: Use smart pointer to store texts
-  //   Text score;
-  //   Text lives;
-  //   Text level;
+  Text* scoreText;
+  Text* scoreNum;
+  Text* livesText;
+  Text* livesNum;
+  Text* levelText;
+  Text* levelNum;
   Paddle paddle;
   std::vector<Brick> bricks;
+  Contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle);
+  Contact CheckWallCollision(Ball const& ball);
+  Contact CheckBricksCollision(Ball const& ball, std::vector<Brick>& bricks);
 };
 
 #endif

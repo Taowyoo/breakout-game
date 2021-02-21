@@ -14,12 +14,18 @@
 #include "TinyMath.hpp"
 
 class Brick : public Rectangle {
+  bool active;
+  int score = BRICK_DEFAULT_SCORE;
+
  public:
   Brick(Vector2D position, bool active = false)
       : Rectangle(position, BRICK_WIDTH, BRICK_HEIGHT), active(active) {}
 
   bool isActive() const { return active; }
   void setActive(bool state) { active = state; }
-  bool active;
+
+  void Draw(SDL_Renderer* renderer) {
+    if (active) SDL_RenderFillRect(renderer, &rect);
+  }
 };
 #endif  // BRICK_HPP
