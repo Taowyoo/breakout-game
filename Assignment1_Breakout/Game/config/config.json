@@ -35,8 +35,8 @@
         "BRICK_HIT_SOUND": "assets/sounds/BrickHit.wav",
         "BACKGROUND_SOUND": "assets/sounds/8_Bit_Surf.wav"
     },
-    "EN_US_LANGUAGE_FILE": "assets/i18n/en_US.config",
-    "ZH_CN_LANGUAGE_FILE": "assets/i18n/zh_CN.config",
+    "EN_US_LANGUAGE_FILE": "assets/i18n/en_US.json",
+    "ZH_CN_LANGUAGE_FILE": "assets/i18n/zh_CN.json",
     "LEVEL_FILES": [
         "config/levels/1.txt",
         "config/levels/2.txt",

@@ -1,0 +1,11 @@
+{
+    "SCORE": "分数",
+    "LIVES": "生命",
+    "LEVEL": "关卡",
+    "PAUSE_NORMAL": "按下 空格键 继续游戏",
+    "PAUSE_LOSE_LIFE": "啊! 按下 空格键 继续游戏",
+    "PAUSE_LOSE_GAME": "失败! 按下 空格键 重新游戏",
+    "PAUSE_WIN_GAME": "获胜! 按下 空格键 进入下一关",
+    "PAUSE_CLEAR_GAME": "通关! 按下 空格键 重新开始",
+    "LANGUAGE_CHOOSE": "按下 1键 选择英语, 按下 2键 选择中文"
+}

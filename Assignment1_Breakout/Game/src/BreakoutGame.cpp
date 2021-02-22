@@ -29,6 +29,10 @@ BreakoutGame::BreakoutGame(int w, int h, nlohmann::json js)
     errorStream << "Fail to load level configs!" << std::endl;
     success = false;
   }
+  if (!loadLanguages()) {
+    errorStream << "Fail to load level language data!" << std::endl;
+    success = false;
+  }
   initGameObjects();
   if (!success) {
     errorStream << "Failed to initialize!\n";
@@ -173,6 +177,43 @@ bool BreakoutGame::loadLevels() {
   return true;
 }
 
+bool BreakoutGame::loadLanguages() {
+  bool success;
+  success = languageSelector.loadOneLanguageContent(
+      configs["ZH_CN_LANGUAGE_FILE"].get<std::string>(), "zh_US");
+  if (!success) return false;
+  success = languageSelector.loadOneLanguageContent(
+      configs["EN_US_LANGUAGE_FILE"].get<std::string>(), "en_US");
+  return success;
+}
+void BreakoutGame::updateAllTexts() {
+  switch (gameState) {
+    case GameState::Initializing:
+      notificationText.SetText(languageSelector.getContent("LANGUAGE_CHOOSE"));
+      break;
+    case GameState::PauseNormal:
+      notificationText.SetText(languageSelector.getContent("PAUSE_NORMAL"));
+      break;
+    case GameState::PauseLoseGame:
+      notificationText.SetText(languageSelector.getContent("PAUSE_LOSE_GAME"));
+      break;
+    case GameState::PauseLoseLife:
+      notificationText.SetText(languageSelector.getContent("PAUSE_LOSE_LIFE"));
+      break;
+    case GameState::PauseWin:
+      notificationText.SetText(languageSelector.getContent("PAUSE_WIN_GAME"));
+      break;
+    case GameState::PauseClearGame:
+      notificationText.SetText(languageSelector.getContent("PAUSE_CLEAR_GAME"));
+      break;
+    default:
+      break;
+  }
+  scoreText.SetText(languageSelector.getContent("SCORE"));
+  livesText.SetText(languageSelector.getContent("LIVES"));
+  levelText.SetText(languageSelector.getContent("LEVEL"));
+}
+
 void BreakoutGame::initGameObjects() {
   // Ball
   initBall();
@@ -197,9 +238,9 @@ void BreakoutGame::initGameObjects() {
   levelText = Text(Vector2D(), gRenderer, contentFont_);
   levelNum = Text(Vector2D(), gRenderer, contentFont_);
   // Init Texts' text
-  scoreText.SetText("Score");
-  livesText.SetText("Lives");
-  levelText.SetText("Level");
+  scoreText.SetText(languageSelector.getContent("SCORE"));
+  livesText.SetText(languageSelector.getContent("LIVES"));
+  levelText.SetText(languageSelector.getContent("LEVEL"));
   scoreNum.SetText(std::to_string(player.getScore()));
   livesNum.SetText(std::to_string(player.getLives()));
   levelNum.SetText(std::to_string(level));
@@ -276,11 +317,13 @@ void BreakoutGame::update(float dt) {
       livesNum.SetText(std::to_string(player.getLives()));
       if (player.getLives() > 0) {
         gameState = GameState::PauseLoseLife;
-        notificationText.SetText("Ops! Press SPACE to continue");
+        notificationText.SetText(
+            languageSelector.getContent("PAUSE_LOSE_LIFE"));
         Mix_PlayChannel(-1, loseLifeSound.get(), 0);
       } else {
         gameState = GameState::PauseLoseGame;
-        notificationText.SetText("You lose! Press SPACE to restart");
+        notificationText.SetText(
+            languageSelector.getContent("PAUSE_LOSE_GAME"));
         player.setScore(0);
         scoreNum.SetText(std::to_string(player.getScore()));
         Mix_PlayChannel(-1, loseSound.get(), 0);
@@ -309,13 +352,15 @@ void BreakoutGame::update(float dt) {
     scoreNum.SetText(std::to_string(player.getScore()));
     // Player win when all bricks are removed
     if (restBricks <= 0) {
-      gameState = GameState::PauseWin;
       level++;
       if (level > maxLevel) {
-        notificationText.SetText("Game cleared! Press SPACE to restart");
+        gameState = GameState::PauseClearGame;
+        notificationText.SetText(
+            languageSelector.getContent("PAUSE_CLEAR_GAME"));
         level = 1;
       } else {
-        notificationText.SetText("You win! Press SPACE to play next level");
+        gameState = GameState::PauseWin;
+        notificationText.SetText(languageSelector.getContent("PAUSE_WIN_GAME"));
       }
       Mix_PlayChannel(-1, winSound.get(), 0);
       // Reset paddle and ball
@@ -385,8 +430,8 @@ void BreakoutGame::loop() {
   updateTimer.start();
 
   // Start game
-  gameState = GameState::PauseNormal;
-  notificationText.SetText("Press SPACE to Start");
+  gameState = GameState::Initializing;
+  notificationText.SetText(languageSelector.getContent("LANGUAGE_CHOOSE"));
   Mix_PlayChannel(-1, backgroundMusic.get(), -1);
   while (!quit) {
     // Start cap timer
@@ -419,7 +464,8 @@ void BreakoutGame::loop() {
         } else if (event.key.keysym.sym == SDLK_SPACE) {
           if (gameState == GameState::Running) {
             gameState = GameState::PauseNormal;
-            notificationText.SetText("Press SPACE to continue");
+            notificationText.SetText(
+                languageSelector.getContent("PAUSE_NORMAL"));
           } else {
             switch (gameState) {
               case GameState::PauseLoseGame:
@@ -430,13 +476,19 @@ void BreakoutGame::loop() {
               case GameState::PauseLoseLife:
                 break;
               case GameState::PauseWin:
-
+                player.setLives(player.getLives() + 1);
                 break;
               default:
                 break;
             }
             gameState = GameState::Running;
           }
+        } else if (event.key.keysym.sym == SDLK_1) {
+          languageSelector.useLanguage("en_US");
+          updateAllTexts();
+        } else if (event.key.keysym.sym == SDLK_2) {
+          languageSelector.useLanguage("zh_US");
+          updateAllTexts();
         }
       } else if (event.type == SDL_KEYUP) {
         if (event.key.keysym.sym == SDLK_a) {

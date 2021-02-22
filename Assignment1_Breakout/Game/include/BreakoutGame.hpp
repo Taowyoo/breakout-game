@@ -39,6 +39,7 @@
 #include "Brick.hpp"
 #include "BricksGenerator.hpp"
 #include "Common.h"
+#include "LanguageManager.hpp"
 #include "Paddle.hpp"
 #include "Player.hpp"
 #include "Text.hpp"
@@ -106,6 +107,7 @@ class BreakoutGame {
   Paddle paddle;
   std::vector<Brick> bricks;
   BricksGenerator bricksGenerator;
+  LanguageSelector languageSelector;
   // Current number of remain bricks
   int restBricks;
   void resetBricks();
@@ -118,6 +120,9 @@ class BreakoutGame {
   void initPaddle();
   // load level data
   bool loadLevels();
+  // load language data
+  bool loadLanguages();
+  void updateAllTexts();
   Contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle);
   Contact CheckWallCollision(Ball const& ball);
   Contact CheckBrickCollision(Ball const& ball, Brick const& brick, float dt);

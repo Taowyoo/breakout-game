@@ -1,0 +1,11 @@
+{
+    "SCORE": "Score",
+    "LIVES": "Lives",
+    "LEVEL": "Level",
+    "PAUSE_NORMAL": "Press SPACE to continue",
+    "PAUSE_LOSE_LIFE": "Ops! Press SPACE to continue",
+    "PAUSE_LOSE_GAME": "You lose! Press SPACE to restart",
+    "PAUSE_WIN_GAME": "You win! Press SPACE to play next level",
+    "PAUSE_CLEAR_GAME": "Game cleared! Press SPACE to restart",
+    "LANGUAGE_CHOOSE": "Press 1 to choose English, Press 2 to choose chinese"
+}

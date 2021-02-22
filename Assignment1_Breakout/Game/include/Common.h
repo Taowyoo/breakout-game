@@ -52,6 +52,7 @@ enum GameState {
   Running,
   PauseNormal,
   PauseWin,
+  PauseClearGame,
   PauseLoseGame,
   PauseLoseLife
 };
