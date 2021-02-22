@@ -38,6 +38,7 @@
 #include "Ball.hpp"
 #include "Brick.hpp"
 #include "Common.h"
+#include "ConfigUtil.hpp"
 #include "Paddle.hpp"
 #include "Player.hpp"
 #include "Text.hpp"
@@ -62,6 +63,7 @@ class BreakoutGame {
   SDL_Renderer* getSDLRenderer();
 
  private:
+  nlohmann::json configs;
   // Game state
   GameState gameState;
   // Button state
