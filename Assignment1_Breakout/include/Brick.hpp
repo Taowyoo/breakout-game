@@ -23,7 +23,8 @@ class Brick : public Rectangle {
 
   bool isActive() const { return active; }
   void setActive(bool state) { active = state; }
-
+  int getScore() const { return score; }
+  void setScore(int score) { this->score = score; }
   void Draw(SDL_Renderer* renderer) {
     if (active) SDL_RenderFillRect(renderer, &rect);
   }

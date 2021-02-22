@@ -153,16 +153,22 @@ struct Vector2D : public Vector3D {
   Vector2D() = default;
 
   Vector2D(float a, float b) : Vector3D(a, b, 0) {}
+
+  Vector2D getRotatedVector(float degree) const {
+    float radian = degree * (M_PI / 180);
+    return Vector2D(x * cosf(radian) - y * sinf(radian),
+                    x * sinf(radian) + y * cosf(radian));
+  }
 };
 
 enum Direction { UP, RIGHT, DOWN, LEFT };
 
 inline Direction VectorDirectionSDL(Vector2D target) {
   Vector2D compass[] = {
-      Vector2D(0.0f, -1.0f),  // up
-      Vector2D(-1.0f, 0.0f),  // right
-      Vector2D(0.0f, 1.0f),   // down
-      Vector2D(1.0f, 0.0f)    // left
+      Vector2D(0.0f, 1.0f),   // up
+      Vector2D(1.0f, 0.0f),   // right
+      Vector2D(0.0f, -1.0f),  // down
+      Vector2D(-1.0f, 0.0f)   // left
   };
   float max = 0.0f;
   unsigned int best_match = -1;
@@ -174,6 +180,11 @@ inline Direction VectorDirectionSDL(Vector2D target) {
     }
   }
   return (Direction)best_match;
+}
+
+inline Vector2D getUnitVectorFromDegree(float degree) {
+  float radian = degree * (M_PI / 180);
+  return Vector2D(cosf(radian), sinf(radian));
 }
 
 // Matrix 3D represents 3x3 matrices in Math

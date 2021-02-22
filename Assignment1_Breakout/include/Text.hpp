@@ -52,8 +52,15 @@ class Text {
       lastText = str;
       int width, height;
       SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
-      rect.w = width;
-      rect.h = height;
+      if (keepCentered) {
+        Vector2D oldCenterPos = getCenterPosition();
+        rect.w = width;
+        rect.h = height;
+        SetCenterPosition(oldCenterPos.x, oldCenterPos.y);
+      } else {
+        rect.w = width;
+        rect.h = height;
+      }
     }
   }
   void Draw() { SDL_RenderCopy(renderer, texture, nullptr, &rect); }
@@ -70,10 +77,15 @@ class Text {
     color.b = b;
     color.a = a;
   }
+
   void SetCenterPosition(int x, int y) {
     rect.x = x - rect.w / 2;
     rect.y = y - rect.h / 2;
   }
+  Vector2D getCenterPosition() const {
+    return Vector2D(rect.x + rect.w / 2, rect.y + rect.h / 2);
+  }
+  void setKeepCentered(bool state) { keepCentered = state; }
   int getWidth() const { return rect.w; }
   int getHeight() const { return rect.h; }
   SDL_Renderer* renderer;
@@ -83,6 +95,7 @@ class Text {
   SDL_Rect rect{};
   SDL_Color color{};
   std::string lastText;
+  bool keepCentered = false;
 };
 
 #endif  // TEXT_H_

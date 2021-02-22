@@ -13,16 +13,7 @@ BreakoutGame::BreakoutGame(int w, int h)
       // Initialize game objects
       // Wall
       wallLeft(Vector2D{GAME_SCENE_LEFT - WALL_WIDTH, 0}, WALL_WIDTH),
-      wallRight(Vector2D{GAME_SCENE_RIGHT, 0}, WALL_WIDTH),
-      // Ball
-      ball(Vector2D{(WINDOW_WIDTH - BALL_WIDTH) / 2,
-                    WINDOW_HEIGHT - PADDLE_HEIGHT - BALL_HEIGHT},
-           Vector2D{0, -BALL_SPEED}),
-      // Paddles
-      paddle(
-          Vector2D{(WINDOW_WIDTH - PADDLE_WIDTH) / 2,
-                   WINDOW_HEIGHT - PADDLE_HEIGHT - PADDLE_DISTANCE_FROM_BOTTOM},
-          Vector2D{PADDLE_SPEED, 0}) {
+      wallRight(Vector2D{GAME_SCENE_RIGHT, 0}, WALL_WIDTH) {
   // Initialize random number generation.
   srand(time(NULL));
 
@@ -68,8 +59,8 @@ BreakoutGame::BreakoutGame(int w, int h)
     // }
 
     // Create window
-    gWindow = SDL_CreateWindow("Lab", 100, 100, screenWidth, screenHeight,
-                               SDL_WINDOW_SHOWN);
+    gWindow = SDL_CreateWindow("Breakout Game", 100, 100, screenWidth,
+                               screenHeight, SDL_WINDOW_SHOWN);
 
     // Check if Window did not create.
     if (gWindow == NULL) {
@@ -93,10 +84,16 @@ BreakoutGame::BreakoutGame(int w, int h)
                   << TTF_GetError() << "\n";
       success = false;
     } else {
-      font_ = TTF_OpenFont("fonts/IPixRegular.ttf", DEFAULT_FONT_SIZE);
-      if (font_ == nullptr) {
-        errorStream << "Failed to load lazy font! SDL_ttf Error: "
-                    << TTF_GetError() << "\n";
+      contentFont_ = TTF_OpenFont(FONT_PIXELGAME_PATH, DEFAULT_FONT_SIZE);
+      if (contentFont_ == nullptr) {
+        errorStream << "Failed to load font! SDL_ttf Error: " << TTF_GetError()
+                    << "\n";
+        success = false;
+      }
+      menuFont_ = TTF_OpenFont(FONT_PIXELGAME_PATH, MENU_FONT_SIZE);
+      if (menuFont_ == nullptr) {
+        errorStream << "Failed to load font! SDL_ttf Error: " << TTF_GetError()
+                    << "\n";
         success = false;
       }
     }
@@ -109,14 +106,14 @@ BreakoutGame::BreakoutGame(int w, int h)
 
   int textRightCenter = WINDOW_WIDTH - textLeftCenter;
   // Score
-  scoreText = new Text(Vector2D(), gRenderer, font_);
-  scoreNum = new Text(Vector2D(), gRenderer, font_);
+  scoreText = new Text(Vector2D(), gRenderer, contentFont_);
+  scoreNum = new Text(Vector2D(), gRenderer, contentFont_);
   // Current rest life
-  livesText = new Text(Vector2D(), gRenderer, font_);
-  livesNum = new Text(Vector2D(), gRenderer, font_);
+  livesText = new Text(Vector2D(), gRenderer, contentFont_);
+  livesNum = new Text(Vector2D(), gRenderer, contentFont_);
   // Current Level
-  levelText = new Text(Vector2D(), gRenderer, font_);
-  levelNum = new Text(Vector2D(), gRenderer, font_);
+  levelText = new Text(Vector2D(), gRenderer, contentFont_);
+  levelNum = new Text(Vector2D(), gRenderer, contentFont_);
   // Init Texts' text
   scoreText->SetText("Score");
   livesText->SetText("Lives");
@@ -149,6 +146,12 @@ BreakoutGame::BreakoutGame(int w, int h)
   beginX += textLineInterval;
   livesNum->SetCenterPosition(textRightCenter,
                               beginX + livesNum->getHeight() / 2);
+
+  // Init text for Win, Lose, Pause or Menu notification
+  notificationText = new Text(Vector2D(), gRenderer, menuFont_);
+  notificationText->SetCenterPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+  notificationText->SetColor(0xa0, 0x00, 0x00, 0xff);
+  notificationText->setKeepCentered(true);
   // Bricks
   // Create bricks
   bricks.reserve(BRICK_COLUMN * BRICK_ROW);
@@ -213,31 +216,47 @@ void BreakoutGame::update(float dt) {
   paddle.Update(dt);
   // Update ball
   ball.Update(dt);
-  // Check collisions
+  // Check collisions and update related objects
   if (Contact contact = CheckPaddleCollision(ball, paddle);
       contact.type != CollisionType::None) {
     ball.CollideWithPaddle(contact);
     // Mix_PlayChannel(-1, paddleHitSound, 0);
-
-  } else if (contact = CheckBricksCollision(ball, bricks);
-             contact.type != CollisionType::None) {
-    ball.CollideWithBrick(contact);
   } else if (contact = CheckWallCollision(ball);
              contact.type != CollisionType::None) {
-    ball.CollideWithWall(contact);
-
-    // When ball fall at Bottom
+    // When ball hit the Bottom
     if (contact.type == CollisionType::Bottom) {
       // Player lose one life
       player.loseLife();
       livesNum->SetText(std::to_string(player.getLives()));
-      // TODO: Check whether player dead
-    } else {
+      if (player.getLives() > 0) {
+        gameState = GameState::PauseLoseLife;
+        notificationText->SetText("Ops! Press SPACE to continue");
+      } else {
+        gameState = GameState::PauseLoseGame;
+        notificationText->SetText("You lose! Press SPACE to restart");
+      }
+      // Reset paddle and ball
+      paddle = Paddle();
+      ball = Ball();
+    } else {  // When ball hit top
       // Mix_PlayChannel(-1, wallHitSound, 0);
     }
+    ball.CollideWithWall(contact);
+  } else {
+    // Check ball collision with all bricks
+    for (Brick& brick : bricks) {
+      if (brick.isActive()) {
+        contact = CheckBrickCollision(ball, brick);
+        if (contact.type != CollisionType::None) {
+          brick.setActive(false);
+          ball.CollideWithBrick(contact);
+          player.addScore(brick.getScore());
+        }
+      }
+    }
+    scoreNum->SetText(std::to_string(player.getScore()));
   }
   // Update Texts
-  scoreNum->SetText(std::to_string(player.getScore()));
 
   levelNum->SetText(std::to_string(level));
 }
@@ -262,13 +281,17 @@ void BreakoutGame::render() {
   for (Brick& brick : bricks) {
     brick.Draw(gRenderer);
   }
-  // Reader Texts
+  // Render Texts
   scoreText->Draw();
   livesText->Draw();
   levelText->Draw();
   scoreNum->Draw();
   livesNum->Draw();
   levelNum->Draw();
+  if (gameState != GameState::Running) {
+    notificationText->Draw();
+  }
+
   SDL_RenderPresent(gRenderer);
 }
 
@@ -325,6 +348,19 @@ void BreakoutGame::loop() {
           if (gameState == GameState::Running) {
             gameState = GameState::PauseNormal;
           } else {
+            switch (gameState) {
+              case GameState::PauseLoseGame:
+                player.setLives(PLAYER_DEFAULT_LIFE_NUM);
+                break;
+              case GameState::PauseLoseLife:
+                /* code */
+                break;
+              case GameState::PauseWin:
+                // TODO: win logic after continue
+                break;
+              default:
+                break;
+            }
             gameState = GameState::Running;
           }
         }
@@ -341,10 +377,6 @@ void BreakoutGame::loop() {
       }
     }  // End while
 
-    // If you have time, implement your frame capping code here
-    // Otherwise, this is a cheap hack for this lab.
-    // SDL_Delay(250);
-
     // Update our scene
     if (gameState == GameState::Running) {
       while (lag >= TICKS_PER_UPDATE) {
@@ -352,6 +384,15 @@ void BreakoutGame::loop() {
         lag -= TICKS_PER_UPDATE;
       }
     }
+
+    // Game state check
+    if (gameState != GameState::Running) {
+      updateTimer.pause();
+    }
+    if (updateTimer.isPaused() && gameState == GameState::Running) {
+      updateTimer.unpause();
+    }
+
     // Render using OpenGL
     render();
 
@@ -406,19 +447,21 @@ Contact BreakoutGame::CheckPaddleCollision(Ball const& ball,
     return contact;
   }
 
-  float paddleRangeLeft = paddleRight - (2.0f * PADDLE_WIDTH / 3.0f);
-  float paddleRangeRight = paddleRight - (PADDLE_WIDTH / 3.0f);
+  // float paddleRangeLeft = paddleRight - (7.0f * PADDLE_WIDTH / 8.0f);
+  // float paddleRangeRight = paddleRight - (PADDLE_WIDTH / 8.0f);
 
-  contact.penetration = paddleTop - ballBottom;
+  contact.penetration.y = paddleTop - ballBottom;
 
-  if ((ballRight > paddleLeft) && (ballRight < paddleRangeLeft)) {
-    contact.type = CollisionType::Left;
-  } else if ((ballRight > paddleRangeLeft) && (ballRight < paddleRangeRight)) {
-    contact.type = CollisionType::Middle;
-  } else {
-    contact.type = CollisionType::Right;
-  }
+  // if ((ballRight > paddleLeft) && (ballRight < paddleRangeLeft)) {
+  //   contact.type = CollisionType::Left;
+  // } else if ((ballRight > paddleRangeLeft) && (ballRight < paddleRangeRight))
+  // {
+  //   contact.type = CollisionType::Middle;
+  // } else {
+  //   contact.type = CollisionType::Right;
+  // }
 
+  contact.type = CollisionType::Middle;
   return contact;
 }
 
@@ -436,64 +479,63 @@ Contact BreakoutGame::CheckWallCollision(Ball const& ball) {
     contact.type = CollisionType::Right;
   } else if (ballTop < 0.0f) {
     contact.type = CollisionType::Top;
-    contact.penetration = -ballTop;
+    contact.penetration.y = -ballTop;
   } else if (ballBottom > WINDOW_HEIGHT) {
     contact.type = CollisionType::Bottom;
-    contact.penetration = WINDOW_HEIGHT - ballBottom;
+    contact.penetration.y = WINDOW_HEIGHT - ballBottom;
   }
 
   return contact;
 }
 
-Contact BreakoutGame::CheckBricksCollision(Ball const& ball,
-                                           std::vector<Brick>& bricks) {
+Contact BreakoutGame::CheckBrickCollision(Ball const& ball,
+                                          Brick const& brick) {
   float ballLeft = ball.position.x;
   float ballRight = ball.position.x + BALL_WIDTH;
   float ballTop = ball.position.y;
   float ballBottom = ball.position.y + BALL_HEIGHT;
 
-  Contact contact{};
   // Loop over all bricks to check collision
+  Contact contact{};
   float brickLeft, brickRight, brickTop, brickBottom;
-  for (Brick& brick : bricks) {
-    if (brick.isActive()) {
-      brickLeft = brick.position.x;
-      brickRight = brick.position.x + BRICK_WIDTH;
-      brickTop = brick.position.y;
-      brickBottom = brick.position.y + BRICK_HEIGHT;
-      if (ballLeft >= brickRight) {
-        continue;
-      }
-      if (ballRight <= brickLeft) {
-        continue;
-      }
-      if (ballTop >= brickBottom) {
-        continue;
-      }
-      if (ballBottom <= brickTop) {
-        continue;
-      }
 
-      Direction d = VectorDirectionSDL(ball.velocity);
-      switch (d) {
-        case Direction::UP:
-          contact.type = CollisionType::Top;
-          break;
-        case Direction::DOWN:
-          contact.type = CollisionType::Bottom;
-          break;
-        case Direction::LEFT:
-          contact.type = CollisionType::Left;
-          break;
-        case Direction::RIGHT:
-          contact.type = CollisionType::Right;
-          break;
-        default:
-          break;
-      }
-      brick.setActive(false);
+  brickLeft = brick.position.x;
+  brickRight = brick.position.x + BRICK_WIDTH;
+  brickTop = brick.position.y;
+  brickBottom = brick.position.y + BRICK_HEIGHT;
+  if (ballLeft >= brickRight) {
+    return contact;
+  }
+  if (ballRight <= brickLeft) {
+    return contact;
+  }
+  if (ballTop >= brickBottom) {
+    return contact;
+  }
+  if (ballBottom <= brickTop) {
+    return contact;
+  }
+
+  Direction d = VectorDirectionSDL(ball.velocity);
+  switch (d) {
+    case Direction::UP:
+      contact.type = CollisionType::Bottom;
+      contact.penetration.y = brickTop - ballBottom;
       break;
-    }
+    case Direction::DOWN:
+      contact.type = CollisionType::Top;
+      contact.penetration.y = brickBottom - ballTop;
+      break;
+    case Direction::LEFT:
+      contact.type = CollisionType::Right;
+      contact.penetration.x = brickLeft - ballRight;
+      break;
+    case Direction::RIGHT:
+      contact.type = CollisionType::Left;
+      contact.penetration.x = brickRight - ballLeft;
+      break;
+    default:
+      break;
   }
   return contact;
 }

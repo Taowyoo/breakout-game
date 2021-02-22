@@ -75,7 +75,8 @@ class BreakoutGame {
   // SDL Renderer
   SDL_Renderer* gRenderer = NULL;
   // Text font
-  TTF_Font* font_;
+  TTF_Font* contentFont_;
+  TTF_Font* menuFont_;
   Player player;
   Wall wallLeft;
   Wall wallRight;
@@ -86,11 +87,12 @@ class BreakoutGame {
   Text* livesNum;
   Text* levelText;
   Text* levelNum;
+  Text* notificationText;
   Paddle paddle;
   std::vector<Brick> bricks;
   Contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle);
   Contact CheckWallCollision(Ball const& ball);
-  Contact CheckBricksCollision(Ball const& ball, std::vector<Brick>& bricks);
+  Contact CheckBrickCollision(Ball const& ball, Brick const& brick);
 };
 
 #endif

@@ -11,7 +11,7 @@ class Player {
   Player() = default;
   Player(int s, int l) : score(s), lives(l) {}
 
-  void setScore(int s) { score = s; }
+  void addScore(int s) { score += s; }
   void setLives(int l) { lives = l; }
   void loseLife() {
     if (lives > 0) --lives;
