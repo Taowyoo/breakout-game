@@ -69,6 +69,6 @@ Your documentation, a link to your binary, and your brief post mortem should be 
 
 Additionally, provide a 1 minute video trailer followed by at least 3 screenshots of your game (order matters, video first, then screenshots below). This website will be the first place I look to grab your project files and binaries. 
 
-[Website is under development](taowyoo.github.io)
+[Link](https://taowyoo.github.io/post/breakout-game/)
 
 **Note**: I think it is incredibly important to build a portfolio of your game development works! You can re-use this template for your next project, and potentially other personal projects.

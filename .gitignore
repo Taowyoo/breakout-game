@@ -375,3 +375,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 .vscode/settings.json
+
+Assignment1_Breakout/Game/bin/breakout

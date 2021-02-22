@@ -4,7 +4,7 @@
 
 ## Game Publicity
 
-**Project Website**: taowyoo.github.io (See part 3)
+**Project Website**: https://taowyoo.github.io/post/breakout-game/ (See part 3)
 
 ## Compilation Instructions
 
