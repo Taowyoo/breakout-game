@@ -18,40 +18,41 @@
 
 class Text {
  public:
-  Text(Vector2D position, SDL_Renderer* renderer, TTF_Font* font)
+  Text() = default;
+  Text(Vector2D position, std::shared_ptr<SDL_Renderer> renderer,
+       std::shared_ptr<TTF_Font> font)
       : renderer(renderer),
         font(font),
         color{0xFF, 0xFF, 0xFF, 0xFF},
         lastText("") {
-    surface =
-        TTF_RenderText_Solid(font, lastText.c_str(), {0xFF, 0xFF, 0xFF, 0xFF});
-    texture = SDL_CreateTextureFromSurface(renderer, surface);
+    surface = std::shared_ptr<SDL_Surface>(
+        TTF_RenderText_Solid(font.get(), lastText.c_str(),
+                             {0xFF, 0xFF, 0xFF, 0xFF}),
+        SDL_FreeSurface);
+    texture = std::shared_ptr<SDL_Texture>(
+        SDL_CreateTextureFromSurface(renderer.get(), surface.get()),
+        SDL_DestroyTexture);
 
     int width, height;
-    SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+    SDL_QueryTexture(texture.get(), nullptr, nullptr, &width, &height);
 
     rect.x = static_cast<int>(position.x);
     rect.y = static_cast<int>(position.y);
     rect.w = width;
     rect.h = height;
   }
-
-  ~Text() {
-    SDL_FreeSurface(surface);
-    SDL_DestroyTexture(texture);
-  }
-
   void SetText(const std::string& str) {
     if (str != lastText) {
-      SDL_FreeSurface(surface);
-      SDL_DestroyTexture(texture);
-
-      surface = TTF_RenderUTF8_Solid(font, str.c_str(), color);
-      texture = SDL_CreateTextureFromSurface(renderer, surface);
+      surface = std::shared_ptr<SDL_Surface>(
+          TTF_RenderUTF8_Solid(font.get(), str.c_str(), color),
+          SDL_FreeSurface);
+      texture = std::shared_ptr<SDL_Texture>(
+          SDL_CreateTextureFromSurface(renderer.get(), surface.get()),
+          SDL_DestroyTexture);
 
       lastText = str;
       int width, height;
-      SDL_QueryTexture(texture, nullptr, nullptr, &width, &height);
+      SDL_QueryTexture(texture.get(), nullptr, nullptr, &width, &height);
       if (keepCentered) {
         Vector2D oldCenterPos = getCenterPosition();
         rect.w = width;
@@ -63,7 +64,7 @@ class Text {
       }
     }
   }
-  void Draw() { SDL_RenderCopy(renderer, texture, nullptr, &rect); }
+  void Draw() { SDL_RenderCopy(renderer.get(), texture.get(), nullptr, &rect); }
   void SetPosition(const Vector2D& position) {
     SetPosition(position.x, position.y);
   }
@@ -88,12 +89,12 @@ class Text {
   void setKeepCentered(bool state) { keepCentered = state; }
   int getWidth() const { return rect.w; }
   int getHeight() const { return rect.h; }
-  SDL_Renderer* renderer;
-  TTF_Font* font;
-  SDL_Surface* surface{};
-  SDL_Texture* texture{};
-  SDL_Rect rect{};
-  SDL_Color color{};
+  std::shared_ptr<SDL_Renderer> renderer;
+  std::shared_ptr<TTF_Font> font;
+  std::shared_ptr<SDL_Surface> surface;
+  std::shared_ptr<SDL_Texture> texture;
+  SDL_Rect rect;
+  SDL_Color color;
   std::string lastText;
   bool keepCentered = false;
 };

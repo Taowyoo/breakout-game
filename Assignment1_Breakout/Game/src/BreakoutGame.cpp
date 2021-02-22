@@ -1,19 +1,96 @@
 #include "BreakoutGame.hpp"
 
 #include "LTimer.h"
-
+#include "ResourceManager.hpp"
 // Initialization function
 // Returns a true or false value based on successful completion of setup.
 // Takes in dimensions of window.
-BreakoutGame::BreakoutGame(int w, int h)
+BreakoutGame::BreakoutGame(int w, int h, nlohmann::json js)
     : screenWidth(w),
       screenHeight(h),
-      level(DEFAULT_LEVEL),
       gameState(Initializing),
-      // Initialize game objects
-      // Wall
-      wallLeft(Vector2D{GAME_SCENE_LEFT - WALL_WIDTH, 0}, WALL_WIDTH),
-      wallRight(Vector2D{GAME_SCENE_RIGHT, 0}, WALL_WIDTH) {
+      configs(js)
+// Initialize game objects
+{
+  bool success = true;
+  // String to hold any errors that occur.
+  std::stringstream errorStream;
+  // Init SDL systems
+  if (!initSDLSystems()) {
+    errorStream << "Fail to init SDL systems" << std::endl;
+    success = false;
+  }
+
+  if (!loadResources()) {
+    errorStream << "Fail to init SDL systems" << std::endl;
+    success = false;
+  }
+  initGameObjects();
+  if (!success) {
+    errorStream << "Failed to initialize!\n";
+    std::string errors = errorStream.str();
+    std::cout << errors << "\n";
+  } else {
+    std::cout << "No SDL errors Detected in during init\n\n";
+  }
+}
+bool BreakoutGame::loadResources() {
+  ResourceManager& rm = ResourceManager::getInstance();
+  rm.init("BreakoutGameResourceManager", "");
+  bool success = false;
+  success = rm.startManager();
+  if (!success) {
+    std::cerr << "Fail to start ResourceManager\n";
+    return success;
+  }
+
+  for (auto& kv : configs["RESOURCE"].items()) {
+    // process font
+    success = rm.AddResource(kv.key(), kv.value().get<std::string>(), nullptr);
+    if (!success) {
+      std::cout << "Fail to Load: " << kv.key() << " : " << kv.value()
+                << std::endl;
+      return success;
+    }
+  }
+  contentFont_ = std::shared_ptr<TTF_Font>(
+      TTF_OpenFontRW(rm.LoadResource("FONT_IPIX_PATH").get(), 0,
+                     DEFAULT_FONT_SIZE),
+      TTF_CloseFont);
+
+  menuFont_ = std::shared_ptr<TTF_Font>(
+      TTF_OpenFontRW(rm.LoadResource("FONT_IPIX_PATH").get(), 0,
+                     MENU_FONT_SIZE),
+      TTF_CloseFont);
+  // Initialize sound effects
+  wallHitSound = std::shared_ptr<Mix_Chunk>(
+      Mix_LoadWAV_RW(rm.LoadResource("WALL_HIT_SOUND").get(), 0),
+      Mix_FreeChunk);
+
+  paddleHitSound = std::shared_ptr<Mix_Chunk>(
+      Mix_LoadWAV_RW(rm.LoadResource("PADDLE_HIT_SOUND").get(), 0),
+      Mix_FreeChunk);
+
+  winSound = std::shared_ptr<Mix_Chunk>(
+      Mix_LoadWAV_RW(rm.LoadResource("WIN_SOUND").get(), 0), Mix_FreeChunk);
+
+  loseSound = std::shared_ptr<Mix_Chunk>(
+      Mix_LoadWAV_RW(rm.LoadResource("LOSE_SOUND").get(), 0), Mix_FreeChunk);
+
+  loseLifeSound = std::shared_ptr<Mix_Chunk>(
+      Mix_LoadWAV_RW(rm.LoadResource("LOSE_LIFE_SOUND").get(), 0),
+      Mix_FreeChunk);
+
+  brickHitSound = std::shared_ptr<Mix_Chunk>(
+      Mix_LoadWAV_RW(rm.LoadResource("BRICK_HIT_SOUND").get(), 0),
+      Mix_FreeChunk);
+  backgroundMusic = std::shared_ptr<Mix_Chunk>(
+      Mix_LoadWAV_RW(rm.LoadResource("BACKGROUND_SOUND").get(), 0),
+      Mix_FreeChunk);
+  return true;
+}
+
+bool BreakoutGame::initSDLSystems() {
   // Initialize random number generation.
   srand(time(NULL));
 
@@ -21,9 +98,6 @@ BreakoutGame::BreakoutGame(int w, int h)
   bool success = true;
   // String to hold any errors that occur.
   std::stringstream errorStream;
-  // The window we'll be rendering to
-  gWindow = NULL;
-  // Render flag
 
   // Initialize SDL
   if (SDL_Init(SDL_INIT_EVERYTHING) < 0) {
@@ -31,73 +105,32 @@ BreakoutGame::BreakoutGame(int w, int h)
                 << "\n";
     success = false;
   } else {
-    // Open Audio
-    int ret = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
-    if (ret < 0) {
-      errorStream << "Audio could not be opened! SDL_Mix Error: "
-                  << Mix_GetError() << "\n";
-      success = false;
-    }
-    // Initialize sound effects
-    wallHitSound = Mix_LoadWAV("assets/sounds/WallHit.wav");
-    if (wallHitSound == nullptr) {
-      errorStream << "Sound file could not be loaded! SDL_Mix Error: "
-                  << Mix_GetError() << "\n";
-      success = false;
-    }
-    paddleHitSound = Mix_LoadWAV("assets/sounds/PaddleHit.wav");
-    if (paddleHitSound == nullptr) {
-      errorStream << "Sound file could not be loaded! SDL_Mix Error: "
-                  << Mix_GetError() << "\n";
-      success = false;
-    }
-    winSound = Mix_LoadWAV("assets/sounds/Win.wav");
-    if (winSound == nullptr) {
-      errorStream << "Sound file could not be loaded! SDL_Mix Error: "
-                  << Mix_GetError() << "\n";
-      success = false;
-    }
-    loseSound = Mix_LoadWAV("assets/sounds/Lose.wav");
-    if (loseSound == nullptr) {
-      errorStream << "Sound file could not be loaded! SDL_Mix Error: "
-                  << Mix_GetError() << "\n";
-      success = false;
-    }
-    loseLifeSound = Mix_LoadWAV("assets/sounds/LoseLife.wav");
-    if (loseLifeSound == nullptr) {
-      errorStream << "Sound file could not be loaded! SDL_Mix Error: "
-                  << Mix_GetError() << "\n";
-      success = false;
-    }
-    brickHitSound = Mix_LoadWAV("assets/sounds/BrickHit.wav");
-    if (brickHitSound == nullptr) {
-      errorStream << "Sound file could not be loaded! SDL_Mix Error: "
-                  << Mix_GetError() << "\n";
-      success = false;
-    }
-    backgroundMusic = Mix_LoadMUS("assets/sounds/8_Bit_Surf.wav");
-    if (backgroundMusic == nullptr) {
-      errorStream << "Music file could not be loaded! SDL_Mix Error: "
-                  << Mix_GetError() << "\n";
-      success = false;
-    }
     // Create window
-    gWindow = SDL_CreateWindow("Breakout Game", 100, 100, screenWidth,
-                               screenHeight, SDL_WINDOW_SHOWN);
-
+    gWindow = std::shared_ptr<SDL_Window>(
+        SDL_CreateWindow("Breakout Game", 100, 100, screenWidth, screenHeight,
+                         SDL_WINDOW_SHOWN),
+        SDL_DestroyWindow);
     // Check if Window did not create.
-    if (gWindow == NULL) {
+    if (gWindow == nullptr) {
       errorStream << "Window could not be created! SDL Error: "
                   << SDL_GetError() << "\n";
       success = false;
+    } else {
+      gRenderer = std::shared_ptr<SDL_Renderer>(
+          SDL_CreateRenderer(gWindow.get(), -1, SDL_RENDERER_ACCELERATED),
+          SDL_DestroyRenderer);
+      // Check if Renderer did not create.
+      if (gRenderer == nullptr) {
+        errorStream << "Renderer could not be created! SDL Error: "
+                    << SDL_GetError() << "\n";
+        success = false;
+      }
     }
-
-    // Create a Renderer to draw on
-    gRenderer = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED);
-    // Check if Renderer did not create.
-    if (gRenderer == NULL) {
-      errorStream << "Renderer could not be created! SDL Error: "
-                  << SDL_GetError() << "\n";
+    // Open Audio
+    int ret = Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    if (ret < 0) {
+      errorStream << "Audio could not be opened! SDL_mixer Error: "
+                  << Mix_GetError() << "\n";
       success = false;
     }
 
@@ -106,22 +139,30 @@ BreakoutGame::BreakoutGame(int w, int h)
       errorStream << "SDL_ttf could not initialize! SDL_ttf Error: "
                   << TTF_GetError() << "\n";
       success = false;
-    } else {
-      contentFont_ = TTF_OpenFont(FONT_IPIX_PATH, DEFAULT_FONT_SIZE);
-      if (contentFont_ == nullptr) {
-        errorStream << "Failed to load font! SDL_ttf Error: " << TTF_GetError()
-                    << "\n";
-        success = false;
-      }
-      menuFont_ = TTF_OpenFont(FONT_IPIX_PATH, MENU_FONT_SIZE);
-      if (menuFont_ == nullptr) {
-        errorStream << "Failed to load font! SDL_ttf Error: " << TTF_GetError()
-                    << "\n";
-        success = false;
-      }
     }
   }
-
+  return success;
+}
+void BreakoutGame::initBall() {
+  ball = Ball(Vector2D((WINDOW_WIDTH - BALL_WIDTH) / 2,
+                       WINDOW_HEIGHT - PADDLE_HEIGHT - BALL_HEIGHT -
+                           PADDLE_DISTANCE_FROM_BOTTOM),
+              Vector2D(BALL_SPEED, 0).getRotatedVector(BALL_START_DEGREE));
+}
+void BreakoutGame::initPaddle() {
+  paddle = Paddle(
+      Vector2D((WINDOW_WIDTH - PADDLE_WIDTH) / 2,
+               WINDOW_HEIGHT - PADDLE_HEIGHT - PADDLE_DISTANCE_FROM_BOTTOM),
+      Vector2D(PADDLE_SPEED, 0));
+}
+void BreakoutGame::initGameObjects() {
+  // Ball
+  initBall();
+  // Paddle
+  initPaddle();
+  // Walls
+  wallLeft = Wall(Vector2D(GAME_SCENE_LEFT - WALL_WIDTH, 0), WALL_WIDTH);
+  wallRight = Wall(Vector2D(GAME_SCENE_RIGHT, 0), WALL_WIDTH);
   // Texts
   int textSideInterval = 50;
   int textLineInterval = 10;
@@ -129,52 +170,51 @@ BreakoutGame::BreakoutGame(int w, int h)
 
   int textRightCenter = WINDOW_WIDTH - textLeftCenter;
   // Score
-  scoreText = new Text(Vector2D(), gRenderer, contentFont_);
-  scoreNum = new Text(Vector2D(), gRenderer, contentFont_);
+  scoreText = Text(Vector2D(), gRenderer, contentFont_);
+  scoreNum = Text(Vector2D(), gRenderer, contentFont_);
   // Current rest life
-  livesText = new Text(Vector2D(), gRenderer, contentFont_);
-  livesNum = new Text(Vector2D(), gRenderer, contentFont_);
+  livesText = Text(Vector2D(), gRenderer, contentFont_);
+  livesNum = Text(Vector2D(), gRenderer, contentFont_);
   // Current Level
-  levelText = new Text(Vector2D(), gRenderer, contentFont_);
-  levelNum = new Text(Vector2D(), gRenderer, contentFont_);
+  levelText = Text(Vector2D(), gRenderer, contentFont_);
+  levelNum = Text(Vector2D(), gRenderer, contentFont_);
   // Init Texts' text
-  scoreText->SetText("Score");
-  livesText->SetText("Lives");
-  levelText->SetText("Level");
-  scoreNum->SetText(std::to_string(player.getScore()));
-  livesNum->SetText(std::to_string(player.getLives()));
-  levelNum->SetText(std::to_string(level));
+  scoreText.SetText("Score");
+  livesText.SetText("Lives");
+  levelText.SetText("Level");
+  scoreNum.SetText(std::to_string(player.getScore()));
+  livesNum.SetText(std::to_string(player.getLives()));
+  levelNum.SetText(std::to_string(level));
   // Set each Texts' center location
   // Left side texts
   int beginX = textSideInterval;
-  levelText->SetCenterPosition(textLeftCenter,
-                               beginX + levelText->getHeight() / 2);
-  beginX += levelText->getHeight();
+  levelText.SetCenterPosition(textLeftCenter,
+                              beginX + levelText.getHeight() / 2);
+  beginX += levelText.getHeight();
   beginX += textLineInterval;
-  levelNum->SetCenterPosition(textLeftCenter,
-                              beginX + levelNum->getHeight() / 2);
+  levelNum.SetCenterPosition(textLeftCenter, beginX + levelNum.getHeight() / 2);
   // Right side texts
   beginX = textSideInterval;
-  scoreText->SetCenterPosition(textRightCenter,
-                               beginX + scoreText->getHeight() / 2);
-  beginX += scoreText->getHeight();
+  scoreText.SetCenterPosition(textRightCenter,
+                              beginX + scoreText.getHeight() / 2);
+  beginX += scoreText.getHeight();
   beginX += textLineInterval;
-  scoreNum->SetCenterPosition(textRightCenter,
-                              beginX + scoreNum->getHeight() / 2);
-  beginX += scoreNum->getHeight();
+  scoreNum.SetCenterPosition(textRightCenter,
+                             beginX + scoreNum.getHeight() / 2);
+  beginX += scoreNum.getHeight();
   beginX += textLineInterval;
-  livesText->SetCenterPosition(textRightCenter,
-                               beginX + livesText->getHeight() / 2);
-  beginX += livesText->getHeight();
+  livesText.SetCenterPosition(textRightCenter,
+                              beginX + livesText.getHeight() / 2);
+  beginX += livesText.getHeight();
   beginX += textLineInterval;
-  livesNum->SetCenterPosition(textRightCenter,
-                              beginX + livesNum->getHeight() / 2);
+  livesNum.SetCenterPosition(textRightCenter,
+                             beginX + livesNum.getHeight() / 2);
 
   // Init text for Win, Lose, Pause or Menu notification
-  notificationText = new Text(Vector2D(), gRenderer, menuFont_);
-  notificationText->SetCenterPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
-  notificationText->SetColor(0xc0, 0x00, 0x00, 0xff);
-  notificationText->setKeepCentered(true);
+  notificationText = Text(Vector2D(), gRenderer, menuFont_);
+  notificationText.SetCenterPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
+  notificationText.SetColor(0xc0, 0x00, 0x00, 0xff);
+  notificationText.setKeepCentered(true);
   // Bricks
   // Create bricks
   bricks.reserve(BRICK_COLUMN * BRICK_ROW);
@@ -191,37 +231,15 @@ BreakoutGame::BreakoutGame(int w, int h)
     y += BRICK_HEIGHT + BRICK_INTERVAL;
   }
   restBricks = bricks.size();
-  // If initialization did not work, then print out a list of errors in the
-  // constructor.
-  if (!success) {
-    errorStream << "Failed to initialize!\n";
-    std::string errors = errorStream.str();
-    std::cout << errors << "\n";
-  } else {
-    std::cout << "No SDL errors Detected in during init\n\n";
-  }
 }
 
 // Proper shutdown and destroy initialized objects
 BreakoutGame::~BreakoutGame() {
-  // Destroy Renderer
-  SDL_DestroyRenderer(gRenderer);
-  // Destroy window
-  SDL_DestroyWindow(gWindow);
-  // Deallocate Texts
-  if (scoreText) delete scoreText;
-  if (livesText) delete livesText;
-  if (levelText) delete levelText;
-  if (scoreNum) delete scoreNum;
-  if (livesNum) delete livesNum;
-  if (levelNum) delete levelNum;
-  // Point gWindow to NULL to ensure it points to nothing.
-  gRenderer = NULL;
-  gWindow = NULL;
   // Quit external SDL libraries
   TTF_Quit();
   Mix_Quit();
-  IMG_Quit();
+  // Stop ResourceManager
+  ResourceManager::getInstance().stopManager();
   // Quit SDL subsystems
   SDL_Quit();
 }
@@ -243,30 +261,30 @@ void BreakoutGame::update(float dt) {
   if (Contact contact = CheckPaddleCollision(ball, paddle);
       contact.type != CollisionType::None) {
     ball.CollideWithPaddle(contact);
-    Mix_PlayChannel(-1, paddleHitSound, 0);
+    Mix_PlayChannel(-1, paddleHitSound.get(), 0);
   } else if (contact = CheckWallCollision(ball);
              contact.type != CollisionType::None) {
     // When ball hit the Bottom
     if (contact.type == CollisionType::Bottom) {
       // Player lose one life
       player.loseLife();
-      livesNum->SetText(std::to_string(player.getLives()));
+      livesNum.SetText(std::to_string(player.getLives()));
       if (player.getLives() > 0) {
         gameState = GameState::PauseLoseLife;
-        notificationText->SetText("Ops! Press SPACE to continue");
-        Mix_PlayChannel(-1, loseLifeSound, 0);
+        notificationText.SetText("Ops! Press SPACE to continue");
+        Mix_PlayChannel(-1, loseLifeSound.get(), 0);
       } else {
         gameState = GameState::PauseLoseGame;
-        notificationText->SetText("You lose! Press SPACE to restart");
+        notificationText.SetText("You lose! Press SPACE to restart");
         player.setScore(0);
-        scoreNum->SetText(std::to_string(player.getScore()));
-        Mix_PlayChannel(-1, loseSound, 0);
+        scoreNum.SetText(std::to_string(player.getScore()));
+        Mix_PlayChannel(-1, loseSound.get(), 0);
       }
       // Reset paddle and ball
-      paddle = Paddle();
-      ball = Ball();
+      initBall();
+      initPaddle();
     } else {  // When ball hit top
-      Mix_PlayChannel(-1, wallHitSound, 0);
+      Mix_PlayChannel(-1, wallHitSound.get(), 0);
     }
     ball.CollideWithWall(contact);
   } else {
@@ -279,58 +297,58 @@ void BreakoutGame::update(float dt) {
           ball.CollideWithBrick(contact);
           player.addScore(brick.getScore());
           restBricks--;
-          Mix_PlayChannel(-1, brickHitSound, 0);
+          Mix_PlayChannel(-1, brickHitSound.get(), 0);
         }
       }
     }
-    scoreNum->SetText(std::to_string(player.getScore()));
+    scoreNum.SetText(std::to_string(player.getScore()));
     // Player win when all bricks are removed
     if (restBricks <= 0) {
       gameState = GameState::PauseWin;
-      notificationText->SetText("You win! Press SPACE to play next level");
+      notificationText.SetText("You win! Press SPACE to play next level");
       // Reset paddle and ball
-      paddle = Paddle();
-      ball = Ball();
+      initBall();
+      initPaddle();
       level++;
-      Mix_PlayChannel(-1, winSound, 0);
+      Mix_PlayChannel(-1, winSound.get(), 0);
     }
   }
   // Update Texts
-  levelNum->SetText(std::to_string(level));
+  levelNum.SetText(std::to_string(level));
 }
 
 // Render
 // The render function gets called once per loop
 void BreakoutGame::render() {
-  SDL_SetRenderDrawColor(gRenderer, 0x22, 0x22, 0x22, 0xFF);
-  SDL_RenderClear(gRenderer);
+  SDL_SetRenderDrawColor(gRenderer.get(), 0x22, 0x22, 0x22, 0xFF);
+  SDL_RenderClear(gRenderer.get());
   // Render wall
-  SDL_SetRenderDrawColor(gRenderer, 0x82, 0x82, 0x82, 0xFF);
-  wallLeft.Draw(gRenderer);
-  wallRight.Draw(gRenderer);
+  SDL_SetRenderDrawColor(gRenderer.get(), 0x82, 0x82, 0x82, 0xFF);
+  wallLeft.Draw(gRenderer.get());
+  wallRight.Draw(gRenderer.get());
   // Render ball
-  SDL_SetRenderDrawColor(gRenderer, 0xFF, 0x00, 0x00, 0xFF);
-  ball.Draw(gRenderer);
+  SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0x00, 0x00, 0xFF);
+  ball.Draw(gRenderer.get());
   // Render paddle
-  SDL_SetRenderDrawColor(gRenderer, 0xFF, 0xFF, 0xFF, 0xFF);
-  paddle.Draw(gRenderer);
+  SDL_SetRenderDrawColor(gRenderer.get(), 0xFF, 0xFF, 0xFF, 0xFF);
+  paddle.Draw(gRenderer.get());
   // Render bricks
-  SDL_SetRenderDrawColor(gRenderer, 28, 56, 183, 0xFF);
+  SDL_SetRenderDrawColor(gRenderer.get(), 28, 56, 183, 0xFF);
   for (Brick& brick : bricks) {
-    brick.Draw(gRenderer);
+    brick.Draw(gRenderer.get());
   }
   // Render Texts
-  scoreText->Draw();
-  livesText->Draw();
-  levelText->Draw();
-  scoreNum->Draw();
-  livesNum->Draw();
-  levelNum->Draw();
+  scoreText.Draw();
+  livesText.Draw();
+  levelText.Draw();
+  scoreNum.Draw();
+  livesNum.Draw();
+  levelNum.Draw();
   if (gameState != GameState::Running) {
-    notificationText->Draw();
+    notificationText.Draw();
   }
 
-  SDL_RenderPresent(gRenderer);
+  SDL_RenderPresent(gRenderer.get());
 }
 
 // Loops forever!
@@ -355,8 +373,8 @@ void BreakoutGame::loop() {
 
   // Start game
   gameState = GameState::PauseNormal;
-  notificationText->SetText("Press SPACE to Start");
-  Mix_PlayMusic(backgroundMusic, -1);
+  notificationText.SetText("Press SPACE to Start");
+  Mix_PlayChannel(-1, backgroundMusic.get(), -1);
   while (!quit) {
     // Start cap timer
     capTimer.start();
@@ -388,12 +406,12 @@ void BreakoutGame::loop() {
         } else if (event.key.keysym.sym == SDLK_SPACE) {
           if (gameState == GameState::Running) {
             gameState = GameState::PauseNormal;
-            notificationText->SetText("Press SPACE to continue");
+            notificationText.SetText("Press SPACE to continue");
           } else {
             switch (gameState) {
               case GameState::PauseLoseGame:
                 player.setLives(PLAYER_DEFAULT_LIFE_NUM);
-                livesNum->SetText(std::to_string(player.getLives()));
+                livesNum.SetText(std::to_string(player.getLives()));
                 resetBricks();
                 break;
               case GameState::PauseLoseLife:
@@ -455,10 +473,12 @@ void BreakoutGame::loop() {
 }
 
 // Get Pointer to Window
-SDL_Window* BreakoutGame::getSDLWindow() { return gWindow; }
+std::shared_ptr<SDL_Window> BreakoutGame::getSDLWindow() { return gWindow; }
 
 // Get Pointer to Renderer
-SDL_Renderer* BreakoutGame::getSDLRenderer() { return gRenderer; }
+std::shared_ptr<SDL_Renderer> BreakoutGame::getSDLRenderer() {
+  return gRenderer;
+}
 
 void BreakoutGame::resetBricks() {
   for (Brick& b : bricks) {

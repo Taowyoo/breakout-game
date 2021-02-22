@@ -1,47 +1,46 @@
 #ifndef COMMON_H_
 #define COMMON_H_
 
+#include <string>
+
 #include "TinyMath.hpp"
+extern int WINDOW_WIDTH;
+extern int WINDOW_HEIGHT;
 
-const int WINDOW_WIDTH = 1280;
-const int WINDOW_HEIGHT = 720;
+extern int GAME_SCENE_WIDTH;
+extern int GAME_SCENE_LEFT;
+extern int GAME_SCENE_RIGHT;
+extern int WALL_WIDTH;
+extern float PADDLE_SPEED;
+extern int PADDLE_WIDTH;
+extern int PADDLE_HEIGHT;
+extern int PADDLE_DISTANCE_FROM_BOTTOM;
 
-const int GAME_SCENE_WIDTH = 640;
-const int GAME_SCENE_LEFT = (WINDOW_WIDTH - GAME_SCENE_WIDTH) / 2;
-const int GAME_SCENE_RIGHT = (WINDOW_WIDTH + GAME_SCENE_WIDTH) / 2;
-const int WALL_WIDTH = 10;
-const float PADDLE_SPEED = 0.75f;
-const int PADDLE_WIDTH = 130;
-const int PADDLE_HEIGHT = 10;
-const int PADDLE_DISTANCE_FROM_BOTTOM = 50;
+extern float BALL_START_DEGREE;
+extern float BALL_SPEED;
+extern int BALL_WIDTH;
+extern int BALL_HEIGHT;
 
-const float BALL_START_DEGREE = -115;
-const float BALL_SPEED = 0.65f;
-const int BALL_WIDTH = 6;
-const int BALL_HEIGHT = 6;
+extern int BRICK_START_HEIGHT;
+extern int BRICK_WIDTH;
+extern int BRICK_HEIGHT;
+extern int BRICK_INTERVAL;
+extern int BRICK_ROW;
+extern int BRICK_COLUMN;
+extern int BRICK_DEFAULT_SCORE;
+extern int PLAYER_DEFAULT_LIFE_NUM;
 
-const int BRICK_START_HEIGHT = 100;
-const int BRICK_WIDTH = 50;
-const int BRICK_HEIGHT = 25;
-const int BRICK_INTERVAL = 2;
-const int BRICK_ROW = 4;
-const int BRICK_COLUMN = 12;
-const int BRICK_DEFAULT_SCORE = 1;
-const int PLAYER_DEFAULT_LIFE_NUM = 3;
+extern int DEFAULT_LEVEL;
 
-const int DEFAULT_LEVEL = 1;
+extern int DEFAULT_FONT_SIZE;
+extern int MENU_FONT_SIZE;
 
-const int DEFAULT_FONT_SIZE = 28;
-const int MENU_FONT_SIZE = 40;
-
-const int SCREEN_FPS_60 = 60;
-const int SCREEN_TICKS_PER_FRAME_60 = 1000 / SCREEN_FPS_60;
+extern int SCREEN_FPS_60;
+extern int SCREEN_TICKS_PER_FRAME_60;
 // Fixed update speed
-const int TICKS_PER_UPDATE = 10;
+extern int TICKS_PER_UPDATE;
 
-const char FONT_PIXELGAME_PATH[] = "assets/fonts/PixelGameFont.ttf";
-const char FONT_IPIX_PATH[] = "assets/fonts/IPixRegular.ttf";
-const char FONT_WQY_PATH[] = "assets/fonts/WenQuanYiMicroHei.ttf";
+extern std::string FONT_IPIX_PATH;
 
 enum Buttons {
   PaddleLeft = 0,

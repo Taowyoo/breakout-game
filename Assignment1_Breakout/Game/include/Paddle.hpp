@@ -15,11 +15,7 @@
 
 class Paddle : public Rectangle {
  public:
-  Paddle()
-      : Paddle(Vector2D{(WINDOW_WIDTH - PADDLE_WIDTH) / 2,
-                        WINDOW_HEIGHT - PADDLE_HEIGHT -
-                            PADDLE_DISTANCE_FROM_BOTTOM},
-               Vector2D{PADDLE_SPEED, 0}) {}
+  Paddle() = default;
   Paddle(Vector2D position, Vector2D velocity)
       : Rectangle(position, PADDLE_WIDTH, PADDLE_HEIGHT), velocity(velocity) {
     rect.y = std::min(rect.y, WINDOW_HEIGHT - rect.h);

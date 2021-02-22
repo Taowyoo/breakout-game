@@ -15,11 +15,7 @@
 
 class Ball {
  public:
-  Ball()
-      : Ball(Vector2D{(WINDOW_WIDTH - BALL_WIDTH) / 2,
-                      WINDOW_HEIGHT - PADDLE_HEIGHT - BALL_HEIGHT -
-                          PADDLE_DISTANCE_FROM_BOTTOM},
-             Vector2D{BALL_SPEED, 0}.getRotatedVector(BALL_START_DEGREE)) {}
+  Ball() = default;
   Ball(Vector2D position, Vector2D velocity)
       : position(position), velocity(velocity) {
     rect.x = static_cast<int>(position.x);

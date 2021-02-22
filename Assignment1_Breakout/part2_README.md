@@ -5,7 +5,7 @@ Nolan is impressed! You have built your first prototype of the game in part 1 an
 
 Local game review sites [Gamespot](https://www.gamespot.com/) and [IGN](https://www.ign.com/) have rated your game preview a 9 out of 10! The hype for your game is motivating the team to work extra hours! Now it is time to clean up the code to produce more final product.
 
-## Step 1 - Resource Manager
+## Step 1 - Resource Manager 
 
 Nolan thinks the game may be running on more resource constrained machines than originally intended. He would like a [Singleton](https://en.wikipedia.org/wiki/Singleton_pattern) class for a resource manager.  *You then do a quick doodle on the white board of pseudo-code for a Resource Manager*
 
@@ -34,7 +34,7 @@ class ResourceManager{
 
 Nolan nods slowly and agrees that you may further look to previous lab and lecture materials for further inspiration.
 
-## Step 2 - Frame Capping
+## Step 2 - Frame Capping **DONE**
 The breakout game should be framecapped to 60fps as the number of machines we are targeting has grown. We want to make sure our game runs consistently across all platforms.
 
 You decide you may also want to cleanup your game, as most of the logic, updates, and game code all exists in one giant loop. You start whiteboarding ideas about a timer class that may be helpful for frame capping and frame independent movement... :)

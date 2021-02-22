@@ -2,7 +2,7 @@ import os
 import platform
 
 # (1)==================== COMMON CONFIGURATION OPTIONS ======================= #
-COMPILER = "clang++ -std=c++17"   # The compiler we want to use
+COMPILER = "clang++ -std=c++17 -g"   # The compiler we want to use
 # (You may try g++ if you have trouble)
 SOURCE = "./src/*.cpp"    # Where the source code lives
 EXECUTABLE = "breakout"        # Name of the final executable

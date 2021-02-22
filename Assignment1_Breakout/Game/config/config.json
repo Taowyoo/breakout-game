@@ -22,9 +22,19 @@
     "DEFAULT_LEVEL": 1,
     "DEFAULT_FONT_SIZE": 28,
     "MENU_FONT_SIZE": 40,
-    "SCREEN_FPS": 60,
+    "SCREEN_FPS_60": 60,
     "TICKS_PER_UPDATE": 10,
-    "FONT_PIXELGAME_PATH": "assets/fonts/PixelGameFont.ttf",
     "FONT_IPIX_PATH": "assets/fonts/IPixRegular.ttf",
-    "FONT_WQY_PATH": "assets/fonts/WenQuanYiMicroHei.ttf"
+    "RESOURCE": {
+        "FONT_IPIX_PATH": "assets/fonts/IPixRegular.ttf",
+        "WALL_HIT_SOUND": "assets/sounds/WallHit.wav",
+        "PADDLE_HIT_SOUND": "assets/sounds/PaddleHit.wav",
+        "WIN_SOUND": "assets/sounds/Win.wav",
+        "LOSE_SOUND": "assets/sounds/Lose.wav",
+        "LOSE_LIFE_SOUND": "assets/sounds/LoseLife.wav",
+        "BRICK_HIT_SOUND": "assets/sounds/BrickHit.wav",
+        "BACKGROUND_SOUND": "assets/sounds/8_Bit_Surf.wav"
+    },
+    "EN_US_LANGUAGE_FILE": "assets/i18n/en_US.config",
+    "ZH_CN_LANGUAGE_FILE": "assets/i18n/zh_CN.config"
 }
