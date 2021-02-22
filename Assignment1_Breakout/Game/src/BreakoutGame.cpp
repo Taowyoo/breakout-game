@@ -485,9 +485,12 @@ void BreakoutGame::loop() {
           }
         } else if (event.key.keysym.sym == SDLK_1) {
           languageSelector.useLanguage("en_US");
+          gameState = GameState::PauseNormal;
           updateAllTexts();
         } else if (event.key.keysym.sym == SDLK_2) {
           languageSelector.useLanguage("zh_US");
+          gameState = GameState::PauseNormal;
+
           updateAllTexts();
         }
       } else if (event.type == SDL_KEYUP) {

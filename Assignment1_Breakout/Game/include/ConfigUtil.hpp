@@ -55,7 +55,6 @@ class ConfigUtil {
     TICKS_PER_UPDATE = js["TICKS_PER_UPDATE"];
 
     // FONT_PIXELGAME_PATH = js["FONT_PIXELGAME_PATH"];
-    FONT_IPIX_PATH = js["FONT_IPIX_PATH"];
     // FONT_WQY_PATH = js["FONT_WQY_PATH"];
   }
 };

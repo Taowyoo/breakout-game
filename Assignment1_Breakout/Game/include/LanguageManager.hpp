@@ -28,7 +28,6 @@ class LanguageSelector {
     Language lan;
     for (auto& kv : json.items()) {
       lan.data.emplace(kv.key(), kv.value().get<std::string>());
-      std::cout << "[Lan] " << kv.key() << " , " << kv.value() << std::endl;
     }
 
     currentLanguage = name;

@@ -40,8 +40,6 @@ extern int SCREEN_TICKS_PER_FRAME_60;
 // Fixed update speed
 extern int TICKS_PER_UPDATE;
 
-extern std::string FONT_IPIX_PATH;
-
 enum Buttons {
   PaddleLeft = 0,
   PaddleRight,

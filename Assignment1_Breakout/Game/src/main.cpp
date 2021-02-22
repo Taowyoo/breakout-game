@@ -3,7 +3,7 @@
 #include "ConfigUtil.hpp"
 int main(int argc, char** argv) {
   // Create an instance of an object for a BreakoutGame
-  auto json = ConfigUtil::loadConfig("config/config.json");
+  auto json = ConfigUtil::loadConfig("../config/config.json");
   ConfigUtil::loadAllVariables(json);
   // nlohmann::json json;
   BreakoutGame myBreakoutGame(WINDOW_WIDTH, WINDOW_HEIGHT, json);

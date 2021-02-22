@@ -34,5 +34,3 @@ int SCREEN_FPS_60;
 int SCREEN_TICKS_PER_FRAME_60;
 // Fixed update speed
 int TICKS_PER_UPDATE;
-
-std::string FONT_IPIX_PATH;

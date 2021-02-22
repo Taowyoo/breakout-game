@@ -8,7 +8,7 @@
     "PADDLE_HEIGHT": 10,
     "PADDLE_DISTANCE_FROM_BOTTOM": 50,
     "BALL_START_DEGREE": -115,
-    "BALL_SPEED": 0.65,
+    "BALL_SPEED": 0.6,
     "BALL_WIDTH": 6,
     "BALL_HEIGHT": 6,
     "BRICK_START_HEIGHT": 20,
@@ -24,24 +24,23 @@
     "MENU_FONT_SIZE": 40,
     "SCREEN_FPS_60": 60,
     "TICKS_PER_UPDATE": 10,
-    "FONT_IPIX_PATH": "assets/fonts/IPixRegular.ttf",
     "RESOURCE": {
-        "FONT_IPIX_PATH": "assets/fonts/IPixRegular.ttf",
-        "WALL_HIT_SOUND": "assets/sounds/WallHit.wav",
-        "PADDLE_HIT_SOUND": "assets/sounds/PaddleHit.wav",
-        "WIN_SOUND": "assets/sounds/Win.wav",
-        "LOSE_SOUND": "assets/sounds/Lose.wav",
-        "LOSE_LIFE_SOUND": "assets/sounds/LoseLife.wav",
-        "BRICK_HIT_SOUND": "assets/sounds/BrickHit.wav",
-        "BACKGROUND_SOUND": "assets/sounds/8_Bit_Surf.wav"
+        "FONT_IPIX_PATH": "../assets/fonts/IPixRegular.ttf",
+        "WALL_HIT_SOUND": "../assets/sounds/WallHit.wav",
+        "PADDLE_HIT_SOUND": "../assets/sounds/PaddleHit.wav",
+        "WIN_SOUND": "../assets/sounds/Win.wav",
+        "LOSE_SOUND": "../assets/sounds/Lose.wav",
+        "LOSE_LIFE_SOUND": "../assets/sounds/LoseLife.wav",
+        "BRICK_HIT_SOUND": "../assets/sounds/BrickHit.wav",
+        "BACKGROUND_SOUND": "../assets/sounds/8_Bit_Surf.wav"
     },
-    "EN_US_LANGUAGE_FILE": "assets/i18n/en_US.json",
-    "ZH_CN_LANGUAGE_FILE": "assets/i18n/zh_CN.json",
+    "EN_US_LANGUAGE_FILE": "../assets/i18n/en_US.json",
+    "ZH_CN_LANGUAGE_FILE": "../assets/i18n/zh_CN.json",
     "LEVEL_FILES": [
-        "config/levels/1.txt",
-        "config/levels/2.txt",
-        "config/levels/3.txt",
-        "config/levels/4.txt",
-        "config/levels/5.txt"
+        "../config/levels/1.txt",
+        "../config/levels/2.txt",
+        "../config/levels/3.txt",
+        "../config/levels/4.txt",
+        "../config/levels/5.txt"
     ]
 }
