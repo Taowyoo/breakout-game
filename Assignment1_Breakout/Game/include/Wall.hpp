@@ -15,6 +15,7 @@
 
 class Wall : public Rectangle {
  public:
+  Wall() = default;
   Wall(Vector2D position, int width)
       : Rectangle(position, width, WINDOW_HEIGHT) {
     position.y = 0;

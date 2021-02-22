@@ -4,11 +4,19 @@
 
 ## Game Publicity
 
-**Project Website**: *please edit the project website with a link here* (See part 3)
+**Project Website**: taowyoo.github.io (See part 3)
 
 ## Compilation Instructions
 
-*Please edit if there are any special build instructions beyond running `python3 build.py`*
+This breakout game need to run under linux, ubuntu20.04 is the best choice.
+
+You may run following line to ensure a successful build process.
+```bash
+cd {REPO_ROOT_FOLDER}/Game
+sudo apt install sudo apt-get install libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev libsdl2-ttf-dev
+python3 build.py
+```
+Then run the game under `bin`
 
 ## Project Hieararchy
 

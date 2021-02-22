@@ -40,13 +40,28 @@ Comments within code are in the style of:
 
 ```
 
-## Step 2 - Build (binary file)
+## Step 2 - Build (binary file) **DONE**
 You need to have a compiled binary of your game for your operating system (Either Windows, Mac, or Linux). You can assume a target audience of either a 64-bit Mac, Ubuntu Linux, or a Windows 10 machine. There should additionally be instructions about how to compile your code from source. The compilation should be trivial (running `python build.py` for example, or listing a series of `apt-get install` in a single command or a script you have built. **Make it trivial** so customers/TA's can easily build your project :) ).
 
 ## Step 3 - Post mortem
 A post mortem in games is a look back at what could be improved. Write a brief (2-3 paragraphs) on what could be improved if you had an additional 8 weeks to work on this project. Where would you allocate time, what tools would you build, would you use any different tools, etc.
 
-*Edit here a draft of your post mortem here if you like--the final copy goes in your 1-page .html website. Think of this section as a good 'reflection' for what you can improve on your next project you complete.*
+There are so many places I could improve.
+
+1. About code:
+   1. There is a double free bug when close the game, I am going to fix it, even it does no infuence on game play.
+   2. Related to last problem. I should think more deep and consider to refactor the `ResourceManager`. There are so many memory related points I have to carefully deal with.
+   3. There are some code style inconsistancy because of quick development. I will improve them later.
+   4. The doc & comments are still not quite well.
+   5. The overall design of each component can be improved. As many classes were written before think and just made sure the functionality of each class.
+2. About gameplay:
+   1. The Collision detect and Collision type detect still has some bug on some side cases.
+   2. I could add some more feature of gameplay, such as: following buffs or ball speed chang.
+   3. Add mouse control will be one great improvement to game.
+3. About outlooking:
+   1. The outlooking is so simple, I did not use any texture. I should consider to improve the game scene and bricks with some colorful textures.
+4. About Audio and other:
+   1. I should make a menu for the game, so that player can make more change on game settings: Such as change background music.
 
 ## Step 4 - Website
 
@@ -54,6 +69,6 @@ Your documentation, a link to your binary, and your brief post mortem should be 
 
 Additionally, provide a 1 minute video trailer followed by at least 3 screenshots of your game (order matters, video first, then screenshots below). This website will be the first place I look to grab your project files and binaries. 
 
-[Please edit and put a link to your website here](./Game/README.md)
+[Website is under development](taowyoo.github.io)
 
 **Note**: I think it is incredibly important to build a portfolio of your game development works! You can re-use this template for your next project, and potentially other personal projects.

@@ -2,10 +2,10 @@ import os
 import platform
 
 # (1)==================== COMMON CONFIGURATION OPTIONS ======================= #
-COMPILER = "clang++ -std=c++17"   # The compiler we want to use
+COMPILER = "clang++ -std=c++17 -g"   # The compiler we want to use
 # (You may try g++ if you have trouble)
 SOURCE = "./src/*.cpp"    # Where the source code lives
-EXECUTABLE = "breakout"        # Name of the final executable
+EXECUTABLE = "./bin/breakout"        # Name of the final executable
 # ======================= COMMON CONFIGURATION OPTIONS ======================= #
 
 # (2)=================== Platform specific configuration ===================== #
@@ -17,7 +17,7 @@ LIBRARIES = ""            # What libraries do we want to include
 
 if platform.system() == "Linux":
     ARGUMENTS = "-D LINUX"  # -D is a #define sent to preprocessor
-    INCLUDE_DIR = "-I ./include/ -I ./../common/thirdparty/glm/ -I /usr/include/SDL2"
+    INCLUDE_DIR = "-I ./include/ -I ./3rd/include/ -I ./../common/thirdparty/glm/ -I /usr/include/SDL2"
     LIBRARIES = "-lSDL2 -ldl -lSDL2_image -lSDL2_ttf -lSDL2_mixer"
 elif platform.system() == "Darwin":
     ARGUMENTS = "-D MAC"  # -D is a #define sent to the preprocessor.

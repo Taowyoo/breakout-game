@@ -37,17 +37,19 @@
 
 #include "Ball.hpp"
 #include "Brick.hpp"
+#include "BricksGenerator.hpp"
 #include "Common.h"
+#include "LanguageManager.hpp"
 #include "Paddle.hpp"
 #include "Player.hpp"
 #include "Text.hpp"
 #include "Wall.hpp"
-
+#include "json.hpp"
 // This class sets up a full graphics Breakout Game
 class BreakoutGame {
  public:
   // Constructor
-  BreakoutGame(int w, int h);
+  BreakoutGame(int w, int h, nlohmann::json js);
   // Desctructor
   ~BreakoutGame();
   // Per frame update
@@ -57,11 +59,12 @@ class BreakoutGame {
   // loop that runs forever
   void loop();
   // Get Pointer to Window
-  SDL_Window* getSDLWindow();
+  std::shared_ptr<SDL_Window> getSDLWindow();
   // Get Pointer to Renderer
-  SDL_Renderer* getSDLRenderer();
+  std::shared_ptr<SDL_Renderer> getSDLRenderer();
 
  private:
+  nlohmann::json configs;
   // Game state
   GameState gameState;
   // Button state
@@ -70,30 +73,32 @@ class BreakoutGame {
   int screenHeight;
   int screenWidth;
   // Current game level
-  int level;
+  int level = 1;
+  // Max level
+  int maxLevel;
   // The window we'll be rendering to
-  SDL_Window* gWindow;
+  std::shared_ptr<SDL_Window> gWindow;
   // SDL Renderer
-  SDL_Renderer* gRenderer = NULL;
+  std::shared_ptr<SDL_Renderer> gRenderer;
   // Text font
-  TTF_Font* contentFont_;
-  TTF_Font* menuFont_;
+  std::shared_ptr<TTF_Font> contentFont_;
+  std::shared_ptr<TTF_Font> menuFont_;
   // Sounds
-  Mix_Chunk* wallHitSound;
-  Mix_Chunk* paddleHitSound;
-  Mix_Chunk* winSound;
-  Mix_Chunk* loseSound;
-  Mix_Chunk* brickHitSound;
-  Mix_Chunk* loseLifeSound;
-  Mix_Music* backgroundMusic;
+  std::shared_ptr<Mix_Chunk> wallHitSound;
+  std::shared_ptr<Mix_Chunk> paddleHitSound;
+  std::shared_ptr<Mix_Chunk> winSound;
+  std::shared_ptr<Mix_Chunk> loseSound;
+  std::shared_ptr<Mix_Chunk> brickHitSound;
+  std::shared_ptr<Mix_Chunk> loseLifeSound;
+  std::shared_ptr<Mix_Chunk> backgroundMusic;
   // Texts
-  Text* scoreText;
-  Text* scoreNum;
-  Text* livesText;
-  Text* livesNum;
-  Text* levelText;
-  Text* levelNum;
-  Text* notificationText;
+  Text scoreText;
+  Text scoreNum;
+  Text livesText;
+  Text livesNum;
+  Text levelText;
+  Text levelNum;
+  Text notificationText;
   // Game objects
   Player player;
   Wall wallLeft;
@@ -101,9 +106,23 @@ class BreakoutGame {
   Ball ball;
   Paddle paddle;
   std::vector<Brick> bricks;
+  BricksGenerator bricksGenerator;
+  LanguageSelector languageSelector;
   // Current number of remain bricks
   int restBricks;
   void resetBricks();
+  bool initSDLSystems();
+  void initGameObjects();
+  bool loadResources();
+  // Ball
+  void initBall();
+  // Paddle
+  void initPaddle();
+  // load level data
+  bool loadLevels();
+  // load language data
+  bool loadLanguages();
+  void updateAllTexts();
   Contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle);
   Contact CheckWallCollision(Ball const& ball);
   Contact CheckBrickCollision(Ball const& ball, Brick const& brick, float dt);
