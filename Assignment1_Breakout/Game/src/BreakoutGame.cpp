@@ -585,29 +585,7 @@ Contact BreakoutGame::CheckBrickCollision(Ball const& ball, Brick const& brick,
   if (ballBottom <= brickTop) {
     return contact;
   }
-  // float ballCenterX = ball.position.x + BALL_HEIGHT / 2.0;
-  // float ballCenterY = ball.position.y + BALL_WIDTH / 2.0;
-  // Direction d = VectorDirectionSDL(ball.velocity);
-  // switch (d) {
-  //   case Direction::UP:
-  //     contact.type = CollisionType::Bottom;
-  //     contact.penetration.y = brickTop - ballBottom;
-  //     break;
-  //   case Direction::DOWN:
-  //     contact.type = CollisionType::Top;
-  //     contact.penetration.y = brickBottom - ballTop;
-  //     break;
-  //   case Direction::LEFT:
-  //     contact.type = CollisionType::Right;
-  //     contact.penetration.x = brickLeft - ballRight;
-  //     break;
-  //   case Direction::RIGHT:
-  //     contact.type = CollisionType::Left;
-  //     contact.penetration.x = brickRight - ballLeft;
-  //     break;
-  //   default:
-  //     break;
-  // }
+
   if (ballRight >= brickLeft && ballRight <= brickLeft + ball.velocity.x * dt) {
     contact.type = CollisionType::Right;
     contact.penetration.x = brickLeft - ballRight;
