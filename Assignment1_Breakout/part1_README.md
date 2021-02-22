@@ -31,20 +31,20 @@ Nolan prefers these tools because SDL is an industry standard, cross platform. U
 
 The breakout game you are building in part 1 has the following requirements.
 
-1. There is at least one level with blue bricks with 4 rows of 12 bricks.
-2. The User interface displays the number of "lives" available (3 to start)
-3. The User interface displays the score, correlating to how many bricks have been removed
+1. There is at least one level with blue bricks with 4 rows of 12 bricks. **DONE**
+2. The User interface displays the number of "lives" available (3 to start) **DONE**
+3. The User interface displays the score, correlating to how many bricks have been removed **DONE**
 4. You have a paddle, that is controlled with either:
-    - The left and right arrow keys (To move the paddle left and right respectively)
-    - <kbd>a</kbd> and <kbd>d</kbd> keys  (To move the paddle left and right respectively)
-5. When the ball collides with the paddle, it should change velocity in the opposite direction.
+    - The left and right arrow keys (To move the paddle left and right respectively) **DONE**
+    - <kbd>a</kbd> and <kbd>d</kbd> keys  (To move the paddle left and right respectively) **DONE**
+5. When the ball collides with the paddle, it should change velocity in the opposite direction. **DONE**
     - (Note, we will build a 'TinyMath.h' library to help handle things like collision, modeling velocity, etc.)
-6. A sound clip should play on collision.
-7. When the user hits <kbd>q</kbd> the program terminates.
-8. When all blocks are removed, the game should pause and display "You win!" (Or some equally enthusiastic message).
-9. If all lives are lost, the game should pause and display "You Lose!" (Or some equally sad/school appropriate message).
-10. There should be a music track looping in the background.
-11. You must use a [python3 build.py](./build.py) script to build your project (i.e. the ones provided from the lab are a good starting point).
+6. A sound clip should play on collision. **DONE**
+7. When the user hits <kbd>q</kbd> the program terminates. **DONE**
+8. When all blocks are removed, the game should pause and display "You win!" (Or some equally enthusiastic message). **DONE**
+9. If all lives are lost, the game should pause and display "You Lose!" (Or some equally sad/school appropriate message). **DONE**
+10. There should be a music track looping in the background. **DONE**
+11. You must use a [python3 build.py](./build.py) script to build your project (i.e. the ones provided from the lab are a good starting point). **DONE**
 
 Beyond those requirements, you may get as creative as you like.
 
