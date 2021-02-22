@@ -37,13 +37,13 @@
 
 #include "Ball.hpp"
 #include "Brick.hpp"
+#include "BricksGenerator.hpp"
 #include "Common.h"
 #include "Paddle.hpp"
 #include "Player.hpp"
 #include "Text.hpp"
 #include "Wall.hpp"
 #include "json.hpp"
-
 // This class sets up a full graphics Breakout Game
 class BreakoutGame {
  public:
@@ -73,6 +73,8 @@ class BreakoutGame {
   int screenWidth;
   // Current game level
   int level = 1;
+  // Max level
+  int maxLevel;
   // The window we'll be rendering to
   std::shared_ptr<SDL_Window> gWindow;
   // SDL Renderer
@@ -103,6 +105,7 @@ class BreakoutGame {
   Ball ball;
   Paddle paddle;
   std::vector<Brick> bricks;
+  BricksGenerator bricksGenerator;
   // Current number of remain bricks
   int restBricks;
   void resetBricks();
@@ -111,9 +114,10 @@ class BreakoutGame {
   bool loadResources();
   // Ball
   void initBall();
-
   // Paddle
   void initPaddle();
+  // load level data
+  bool loadLevels();
   Contact CheckPaddleCollision(Ball const& ball, Paddle const& paddle);
   Contact CheckWallCollision(Ball const& ball);
   Contact CheckBrickCollision(Ball const& ball, Brick const& brick, float dt);

@@ -17,12 +17,16 @@ BreakoutGame::BreakoutGame(int w, int h, nlohmann::json js)
   std::stringstream errorStream;
   // Init SDL systems
   if (!initSDLSystems()) {
-    errorStream << "Fail to init SDL systems" << std::endl;
+    errorStream << "Fail to init SDL systems!" << std::endl;
     success = false;
   }
 
   if (!loadResources()) {
-    errorStream << "Fail to init SDL systems" << std::endl;
+    errorStream << "Fail to load resources!" << std::endl;
+    success = false;
+  }
+  if (!loadLevels()) {
+    errorStream << "Fail to load level configs!" << std::endl;
     success = false;
   }
   initGameObjects();
@@ -155,6 +159,20 @@ void BreakoutGame::initPaddle() {
                WINDOW_HEIGHT - PADDLE_HEIGHT - PADDLE_DISTANCE_FROM_BOTTOM),
       Vector2D(PADDLE_SPEED, 0));
 }
+bool BreakoutGame::loadLevels() {
+  std::cout << "Loading level config files..." << std::endl;
+  for (auto& path : configs["LEVEL_FILES"]) {
+    if (!bricksGenerator.loadOneLevelData(path)) {
+      std::cerr << "Fail to load level config file: " << path << std::endl;
+      return false;
+    } else {
+      std::cout << "Loaded " << path << std::endl;
+    }
+  }
+  maxLevel = bricksGenerator.getMaxLevel();
+  return true;
+}
+
 void BreakoutGame::initGameObjects() {
   // Ball
   initBall();
@@ -215,21 +233,8 @@ void BreakoutGame::initGameObjects() {
   notificationText.SetCenterPosition(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2);
   notificationText.SetColor(0xc0, 0x00, 0x00, 0xff);
   notificationText.setKeepCentered(true);
-  // Bricks
-  // Create bricks
-  bricks.reserve(BRICK_COLUMN * BRICK_ROW);
-  int brickSumWidth =
-      BRICK_COLUMN * BRICK_WIDTH + (BRICK_COLUMN - 1) * BRICK_INTERVAL;
-  int brickStartX = (WINDOW_WIDTH - brickSumWidth) / 2;
-  int brickStartY = BRICK_START_HEIGHT;
-  for (int i = 0, x = brickStartX, y = brickStartY; i < BRICK_ROW; i++) {
-    for (int j = 0; j < BRICK_COLUMN; j++) {
-      bricks.push_back(Brick(Vector2D(x, y), true));
-      x += BRICK_WIDTH + BRICK_INTERVAL;
-    }
-    x = brickStartX;
-    y += BRICK_HEIGHT + BRICK_INTERVAL;
-  }
+
+  bricks = bricksGenerator.getLevelBricks(level - 1);
   restBricks = bricks.size();
 }
 
@@ -305,12 +310,20 @@ void BreakoutGame::update(float dt) {
     // Player win when all bricks are removed
     if (restBricks <= 0) {
       gameState = GameState::PauseWin;
-      notificationText.SetText("You win! Press SPACE to play next level");
+      level++;
+      if (level > maxLevel) {
+        notificationText.SetText("Game cleared! Press SPACE to restart");
+        level = 1;
+      } else {
+        notificationText.SetText("You win! Press SPACE to play next level");
+      }
+      Mix_PlayChannel(-1, winSound.get(), 0);
       // Reset paddle and ball
       initBall();
       initPaddle();
-      level++;
-      Mix_PlayChannel(-1, winSound.get(), 0);
+      // Generate new level bricks
+      bricks = bricksGenerator.getLevelBricks(level - 1);
+      restBricks = bricks.size();
     }
   }
   // Update Texts
@@ -417,7 +430,7 @@ void BreakoutGame::loop() {
               case GameState::PauseLoseLife:
                 break;
               case GameState::PauseWin:
-                resetBricks();
+
                 break;
               default:
                 break;
