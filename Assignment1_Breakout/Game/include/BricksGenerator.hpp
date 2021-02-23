@@ -1,3 +1,13 @@
+/**
+ * @file BricksGenerator.hpp
+ * @author Yuxiang Cao (cao.yux@northeastern.edu)
+ * @brief Header file for BricksGenerator
+ * @version 1.0.0
+ * @date 2021-02-22 22:47:39 -08:00
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #if !defined(BRICKS_GENERATOR_HPP)
 #define BRICKS_GENERATOR_HPP
 #include <fstream>
@@ -7,15 +17,31 @@
 
 #include "Brick.hpp"
 #include "Common.h"
+/**
+ * @brief Struct to store brick arrangement data of one level
+ *
+ */
 struct LevelData {
+  /// Raw data stored in string for each row of bricks
   std::vector<std::string> data;
 };
-
+/**
+ * @brief Helper class to load and generate each level bricks arrangement
+ *
+ */
 class BricksGenerator {
  private:
+  /// All level data store in an array
   std::vector<LevelData> allLevels;
 
  public:
+  /**
+   * @brief Load one level config data form a file
+   *
+   * @param path File path
+   * @return true Success to load
+   * @return false Error occurs
+   */
   bool loadOneLevelData(const std::string& path) {
     std::ifstream ifs(path);
     if (!ifs.is_open()) {
@@ -32,6 +58,12 @@ class BricksGenerator {
     allLevels.push_back(levelData);
     return true;
   }
+  /**
+   * @brief Get the bricks info of specific level
+   *
+   * @param level Level number
+   * @return std::vector<Brick> Bricks array
+   */
   std::vector<Brick> getLevelBricks(int level) const {
     std::vector<Brick> bricks;
     bricks.reserve(BRICK_COLUMN * BRICK_ROW);
@@ -55,6 +87,11 @@ class BricksGenerator {
     }
     return bricks;
   }
+  /**
+   * @brief Get the Max Level
+   *
+   * @return int Max Level number
+   */
   int getMaxLevel() const { return allLevels.size(); }
 };
 

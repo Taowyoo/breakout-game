@@ -1,10 +1,25 @@
+/**
+ * @file BreakoutGame.cpp
+ * @author Yuxiang Cao (cao.yux@northeastern.edu)
+ * @brief BreakoutGame Class Implementation
+ * @version 1.0.0
+ * @date 2021-02-22 22:43:39 -08:00
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
+
 #include "BreakoutGame.hpp"
 
 #include "LTimer.h"
 #include "ResourceManager.hpp"
-// Initialization function
-// Returns a true or false value based on successful completion of setup.
-// Takes in dimensions of window.
+/**
+ * @brief Construct a new Breakout Game object
+ *
+ * @param w Game program window width
+ * @param h Game program window height
+ * @param js Config json object
+ */
 BreakoutGame::BreakoutGame(int w, int h, nlohmann::json js)
     : screenWidth(w),
       screenHeight(h),
@@ -42,6 +57,12 @@ BreakoutGame::BreakoutGame(int w, int h, nlohmann::json js)
     std::cout << "No SDL errors Detected in during init\n\n";
   }
 }
+/**
+ * @brief Load all resource which need IO by using ResourceManger
+ *
+ * @return true Load all resources successfully
+ * @return false Error occurs
+ */
 bool BreakoutGame::loadResources() {
   ResourceManager& rm = ResourceManager::getInstance();
   rm.init("BreakoutGameResourceManager", "");
@@ -97,7 +118,12 @@ bool BreakoutGame::loadResources() {
       Mix_FreeChunk);
   return true;
 }
-
+/**
+ * @brief Init SDL systems
+ *
+ * @return true Init SDL and extra systems successfully
+ * @return false Error occurs
+ */
 bool BreakoutGame::initSDLSystems() {
   // Initialize random number generation.
   srand(time(NULL));
@@ -151,18 +177,27 @@ bool BreakoutGame::initSDLSystems() {
   }
   return success;
 }
+
+/// Init or reset ball state
 void BreakoutGame::initBall() {
   ball = Ball(Vector2D((WINDOW_WIDTH - BALL_WIDTH) / 2,
                        WINDOW_HEIGHT - PADDLE_HEIGHT - BALL_HEIGHT -
                            PADDLE_DISTANCE_FROM_BOTTOM),
               Vector2D(BALL_SPEED, 0).getRotatedVector(BALL_START_DEGREE));
 }
+/// Init or reset paddle state
 void BreakoutGame::initPaddle() {
   paddle = Paddle(
       Vector2D((WINDOW_WIDTH - PADDLE_WIDTH) / 2,
                WINDOW_HEIGHT - PADDLE_HEIGHT - PADDLE_DISTANCE_FROM_BOTTOM),
       Vector2D(PADDLE_SPEED, 0));
 }
+/**
+ * @brief Load level data from files
+ *
+ * @return true Read and load level data successfully
+ * @return false Error occurs
+ */
 bool BreakoutGame::loadLevels() {
   std::cout << "Loading level config files..." << std::endl;
   for (auto& path : configs["LEVEL_FILES"]) {
@@ -176,7 +211,12 @@ bool BreakoutGame::loadLevels() {
   maxLevel = bricksGenerator.getMaxLevel();
   return true;
 }
-
+/**
+ * @brief Load multi-language text data from file
+ *
+ * @return true Read and load all data successfully
+ * @return false Error occurs
+ */
 bool BreakoutGame::loadLanguages() {
   bool success;
   success = languageSelector.loadOneLanguageContent(
@@ -186,6 +226,7 @@ bool BreakoutGame::loadLanguages() {
       configs["EN_US_LANGUAGE_FILE"].get<std::string>(), "en_US");
   return success;
 }
+/// Update all texts object when language change
 void BreakoutGame::updateAllTexts() {
   switch (gameState) {
     case GameState::Initializing:
@@ -213,7 +254,7 @@ void BreakoutGame::updateAllTexts() {
   livesText.SetText(languageSelector.getContent("LIVES"));
   levelText.SetText(languageSelector.getContent("LEVEL"));
 }
-
+/// Init all game Objects
 void BreakoutGame::initGameObjects() {
   // Ball
   initBall();
@@ -289,8 +330,11 @@ BreakoutGame::~BreakoutGame() {
   // Quit SDL subsystems
   SDL_Quit();
 }
-
-// Update OpenGL
+/**
+ * @brief Update game state
+ *
+ * @param dt Milliseconds passed from last update
+ */
 void BreakoutGame::update(float dt) {
   // Update paddle
   if (buttons[Buttons::PaddleLeft]) {
@@ -375,8 +419,10 @@ void BreakoutGame::update(float dt) {
   levelNum.SetText(std::to_string(level));
 }
 
-// Render
-// The render function gets called once per loop
+/**
+ * @brief Render all things for next frame
+ *
+ */
 void BreakoutGame::render() {
   SDL_SetRenderDrawColor(gRenderer.get(), 0x22, 0x22, 0x22, 0xFF);
   SDL_RenderClear(gRenderer.get());
@@ -409,7 +455,10 @@ void BreakoutGame::render() {
   SDL_RenderPresent(gRenderer.get());
 }
 
-// Loops forever!
+/**
+ * @brief Game main loop
+ *
+ */
 void BreakoutGame::loop() {
   // Main loop flag
   // If this is quit = 'true' then the program terminates.
@@ -539,22 +588,35 @@ void BreakoutGame::loop() {
   // Disable text input
   SDL_StopTextInput();
 }
-
-// Get Pointer to Window
+/**
+ * @brief Get current pointer to SDL_Window object
+ *
+ * @return std::shared_ptr<SDL_Window> Shared pointer to SDL_Window
+ */
 std::shared_ptr<SDL_Window> BreakoutGame::getSDLWindow() { return gWindow; }
-
-// Get Pointer to Renderer
+/**
+ * @brief Get current pointer to SDL_Renderer object
+ *
+ * @return std::shared_ptr<SDL_Renderer> Shared pointer to SDL_Renderer
+ */
 std::shared_ptr<SDL_Renderer> BreakoutGame::getSDLRenderer() {
   return gRenderer;
 }
 
+/// Reset all current level bricks' state
 void BreakoutGame::resetBricks() {
   for (Brick& b : bricks) {
     b.setActive(true);
   }
   restBricks = bricks.size();
 }
-
+/**
+ * @brief Check whether ball collide with paddle
+ *
+ * @param ball Ball object
+ * @param paddle Paddle object
+ * @return Contact Collision info
+ */
 Contact BreakoutGame::CheckPaddleCollision(Ball const& ball,
                                            Paddle const& paddle) {
   float ballLeft = ball.position.x;
@@ -589,7 +651,12 @@ Contact BreakoutGame::CheckPaddleCollision(Ball const& ball,
   contact.type = CollisionType::Middle;
   return contact;
 }
-
+/**
+ * @brief Check whether ball collide with wall
+ *
+ * @param ball Ball object
+ * @return Contact Collision info
+ */
 Contact BreakoutGame::CheckWallCollision(Ball const& ball) {
   float ballLeft = ball.position.x;
   float ballRight = ball.position.x + BALL_WIDTH;
@@ -612,7 +679,14 @@ Contact BreakoutGame::CheckWallCollision(Ball const& ball) {
 
   return contact;
 }
-
+/**
+ * @brief Check whether ball collide with one brick
+ *
+ * @param ball Ball object
+ * @param brick Brick object
+ * @param dt Milliseconds passed from last update
+ * @return Contact Collision info
+ */
 Contact BreakoutGame::CheckBrickCollision(Ball const& ball, Brick const& brick,
                                           float dt) {
   float ballLeft = ball.position.x;

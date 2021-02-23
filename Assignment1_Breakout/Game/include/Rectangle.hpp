@@ -1,3 +1,13 @@
+/**
+ * @file Rectangle.hpp
+ * @author Yuxiang Cao (cao.yux@northeastern.edu)
+ * @brief A rectangle class
+ * @version 1.0.0
+ * @date 2021-02-23 00:07:43 -08:00
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #ifndef RECTANGLE_H_
 #define RECTANGLE_H_
 
@@ -11,36 +21,44 @@
 
 #include "Common.h"
 #include "TinyMath.hpp"
-
+/**
+ * @brief A simple rectange class to represnet a rectangle on screen
+ *
+ */
 class Rectangle {
  public:
+  /**
+   * @brief Construct a new Rectangle object
+   *
+   */
   Rectangle() = default;
+  /**
+   * @brief Construct a new Rectangle object
+   *
+   * @param position Position of the Rectangle
+   * @param w Width of the Rectangle
+   * @param h Height of the Rectangle
+   */
   Rectangle(Vector2D position, int w, int h) : position(position) {
     rect.x = static_cast<int>(position.x);
     rect.y = static_cast<int>(position.y);
     rect.w = w;
     rect.h = h;
   }
+  /**
+   * @brief Draw the rectangle on screen
+   *
+   * @param renderer The pointer to the global SDL_Renderer
+   */
+  void Draw(SDL_Renderer* renderer) { SDL_RenderFillRect(renderer, &rect); }
 
-  void Draw(SDL_Renderer* renderer) {
-    // SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-    SDL_RenderFillRect(renderer, &rect);
-  }
-  // void SetColor(Uint8 r, Uint8 g, Uint8 b, Uint8 a) {
-  //   color.r = r;
-  //   color.g = g;
-  //   color.b = b;
-  //   color.a = a;
-  // }
-  // void SetColor(const SDL_Color& c) {
-  //   color.r = c.r;
-  //   color.g = c.g;
-  //   color.b = c.b;
-  //   color.a = c.a;
-  // }
+  /// The position of this rectangle
   Vector2D position;
+  /**
+   * @brief A rectangle struct with left top position , height, width
+   *
+   */
   SDL_Rect rect{};
-  // SDL_Color color{};
 };
 
 #endif  // RECTANGLE_H_

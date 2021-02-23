@@ -1,3 +1,13 @@
+/**
+ * @file ResourceManager.hpp
+ * @author Yuxiang Cao (cao.yux@northeastern.edu)
+ * @brief ResourceManager class header
+ * @version 1.0.0
+ * @date 2021-02-22 23:35:03 -08:00
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #ifndef RESOURCE_MANAGER_HPP
 #define RESOURCE_MANAGER_HPP
 
@@ -16,29 +26,63 @@
 
 typedef std::string ResName;
 typedef std::string ResFilePath;
-typedef int ResRefCount;
+
+/**
+ * @brief Singleton ResourceManager manage resources which loaded from files
+ *
+ */
 class ResourceManager {
  private:
+  /// ResourceManager name
   std::string name_;
+  /// The config file which can be automatically loaded
   std::string cfgFilePath_;
+  /// Whether load config file
   bool useConfig_ = false;
+  /// (Resource name , Resource file path) pair
   std::unordered_map<ResName, ResFilePath> fileMap_;
+  /// (Resource name , Resource pointer) pair
   std::unordered_map<ResName, std::shared_ptr<SDL_RWops>> resMap_;
-
+  /**
+   * @brief Construct a new Resource Manager object
+   *
+   */
   ResourceManager() : name_("Not Set"), cfgFilePath_("") {}
+  /// Abandon copy constructor
   ResourceManager(const ResourceManager& other) = delete;
+  /// Abandon copy assign
   ResourceManager& operator=(const ResourceManager& other) = delete;
 
  public:
+  /**
+   * @brief Get the reference to the ResourceManager Instance
+   *
+   * @return ResourceManager& The reference to the ResourceManager Instance
+   */
   static ResourceManager& getInstance() {
     // Lazy initialize.
     static ResourceManager* instance = new ResourceManager();
     return *instance;
   }
-
+  /**
+   * @brief Get number of resources
+   *
+   * @return size_t Number of resources
+   */
   size_t size() const { return resMap_.size(); }
+  /**
+   * @brief Get the name of ResourceManager
+   *
+   * @return std::string Name string
+   */
   std::string name() const { return name_; }
-
+  /**
+   * @brief Init the ResourceManager
+   *
+   * @param name The name of the ResourceManager
+   * @param cfgFilePath Config file path, if empty then manage will not load
+   * config file
+   */
   void init(const std::string& name, const std::string& cfgFilePath) {
     name_ = name;
     cfgFilePath_ = cfgFilePath;
@@ -63,7 +107,15 @@ class ResourceManager {
     }
     SDL_Log("Succeed to init ResourceManager!");
   }
-
+  /**
+   * @brief Start the manager, if preload enable, then load all resource
+   * according to the config file
+   *
+   * @param preload Whether preload
+   * @param args Extra args
+   * @return true Success to start
+   * @return false Fail to start
+   */
   bool startManager(bool preload = false, void* args = nullptr) {
     if (useConfig_ && preload) {
       for (auto const& kv : fileMap_) {
@@ -76,7 +128,12 @@ class ResourceManager {
     }
     return true;
   }
-
+  /**
+   * @brief Stop the manager
+   *
+   * @return true Success to start
+   * @return false Fail to start
+   */
   bool stopManager() {
     name_ = "Not Set";
     useConfig_ = false;
@@ -84,7 +141,14 @@ class ResourceManager {
     RemoveAllResource();
     return true;
   }
-
+  /**
+   * @brief Add a resource by find and load resource in resource-path map
+   *
+   * @param resName Resource name
+   * @param args Extra args
+   * @return true Success to add
+   * @return false Fail to add
+   */
   bool AddResource(const ResName& resName, void* args) {
     // find in fileMap_
     auto it = fileMap_.find(resName);
@@ -95,7 +159,14 @@ class ResourceManager {
     }
     return AddResource(resName, it->second, args);
   }
-
+  /**
+   * @brief Directly add a new resource
+   *
+   * @param resName Resource name
+   * @param newRes Pointer to the resource object
+   * @return true Success to add
+   * @return false Fail to add
+   */
   bool AddResource(const ResName& resName, std::shared_ptr<SDL_RWops> newRes) {
     auto ret = resMap_.emplace(resName, newRes);
     if (!ret.second) {
@@ -104,7 +175,15 @@ class ResourceManager {
     }
     return true;
   }
-
+  /**
+   * @brief Add a resource from file
+   *
+   * @param resName Resource name
+   * @param resPath Resource file path
+   * @param args Extra args
+   * @return true Success to add
+   * @return false Fail to add
+   */
   bool AddResource(const ResName& resName, const ResFilePath& resPath,
                    void* args) {
     auto it = resMap_.find(resName);
@@ -119,7 +198,12 @@ class ResourceManager {
     SDL_Log("Added %s from %s.", resName.c_str(), resPath.c_str());
     return true;
   }
-
+  /**
+   * @brief Offer a resource to others to use
+   *
+   * @param resName Resource name
+   * @return std::shared_ptr<SDL_RWops> The pointer to the resource
+   */
   std::shared_ptr<SDL_RWops> LoadResource(const ResName& resName) const {
     auto it = resMap_.find(resName);
     std::shared_ptr<SDL_RWops> ret;
@@ -130,7 +214,13 @@ class ResourceManager {
     ret = (*it).second;
     return ret;
   }
-
+  /**
+   * @brief Remove one resource by name
+   *
+   * @param resName Resource name
+   * @return true Success to remove
+   * @return false Fail to remove
+   */
   bool RemoveResource(const ResName& resName) {
     auto it = resMap_.find(resName);
     if (it != resMap_.end()) {
@@ -140,7 +230,12 @@ class ResourceManager {
     SDL_Log("Resource to remove does not exist!");
     return false;
   }
-
+  /**
+   * @brief Remove all resources
+   *
+   * @return true Success to remove
+   * @return false Fail to remove
+   */
   bool RemoveAllResource() {
     auto it = resMap_.begin();
     while (it != resMap_.end()) {
@@ -148,7 +243,10 @@ class ResourceManager {
     }
     return true;
   }
-
+  /**
+   * @brief Destroy the Resource Manager object
+   *
+   */
   ~ResourceManager() { RemoveAllResource(); }
 };
 

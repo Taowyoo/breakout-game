@@ -1,3 +1,13 @@
+/**
+ * @file LTimer.h
+ * @author Yuxiang Cao (cao.yux@northeastern.edu)
+ * @brief Simple Timer Class
+ * @version 1.0.0
+ * @date 2021-02-22 23:22:12 -08:00
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #pragma once
 
 #if defined(LINUX) || defined(MINGW) || defined(__linux__)
@@ -8,34 +18,56 @@
 #include <SDL.h>
 #endif
 
-//The application time based timer
-class LTimer
-{
-    public:
-		//Initializes variables
-		LTimer();
+/**
+ * @brief The application time based timer
+ *
+ */
+class LTimer {
+ public:
+  /// Initializes variables
+  LTimer();
 
-		//The various clock actions
-		void start();
-		void stop();
-		void pause();
-		void unpause();
+  /// Start or reset and restart the timer
+  void start();
+  /// Stop the timer
+  void stop();
+  /// Pause the timer
+  void pause();
+  /// Unpause the timer
+  void unpause();
 
-		//Gets the timer's time
-		Uint32 getTicks();
+  /**
+   * @brief Gets the timer's time
+   *
+   * @return Uint32 Time value
+   */
+  Uint32 getTicks();
 
-		//Checks the status of the timer
-		bool isStarted();
-		bool isPaused();
+  /**
+   * @brief Check timer is started
+   *
+   * @return true Started
+   * @return false Not started
+   */
+  bool isStarted();
+  /**
+   * @brief Check timer is is paused
+   *
+   * @return true Paused
+   * @return false Not paused
+   */
+  bool isPaused();
 
-    private:
-		//The clock time when the timer started
-		Uint32 mStartTicks;
+ private:
+  /// The clock time when the timer started
+  Uint32 mStartTicks;
 
-		//The ticks stored when the timer was paused
-		Uint32 mPausedTicks;
+  /// The ticks stored when the timer was paused
+  Uint32 mPausedTicks;
 
-		//The timer status
-		bool mPaused;
-		bool mStarted;
+  /// Whether paused
+  bool mPaused;
+
+  /// Whether started
+  bool mStarted;
 };
