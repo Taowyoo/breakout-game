@@ -56,7 +56,7 @@ There are so many places I could improve.
    5. The overall design of each component can be improved. As many classes were written before think and just made sure the functionality of each class.
 2. About gameplay:
    1. The Collision detect and Collision type detect still has some bug on some side cases.
-   2. I could add some more feature of gameplay, such as: following buffs or ball speed chang.
+   2. I could add some more feature of gameplay, such as: following buffs or ball velocity chang.
    3. Add mouse control will be one great improvement to game.
 3. About outlooking:
    1. The outlooking is so simple, I did not use any texture. I should consider to improve the game scene and bricks with some colorful textures.

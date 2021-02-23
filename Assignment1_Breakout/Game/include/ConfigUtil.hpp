@@ -1,3 +1,13 @@
+/**
+ * @file ConfigUtil.hpp
+ * @author Yuxiang Cao (cao.yux@northeastern.edu)
+ * @brief Helper class to load config from file
+ * @version 1.0.0
+ * @date 2021-02-22 23:05:14 -08:00
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #if !defined(CONFIG_UTIL_HPP)
 #define CONFIG_UTIL_HPP
 #include <fstream>
@@ -6,8 +16,20 @@
 
 #include "Common.h"
 #include "json.hpp"
+
+/**
+ * @brief Help class which use nlohmann::json library to process json format
+ * config file
+ *
+ */
 class ConfigUtil {
  public:
+  /**
+   * @brief Get json object from file
+   *
+   * @param path File path
+   * @return nlohmann::json Deserialized json object
+   */
   static nlohmann::json loadConfig(const std::string& path) {
     std::ifstream ifs(path);
     if (!ifs.is_open()) {
@@ -17,6 +39,11 @@ class ConfigUtil {
     ifs >> j;
     return j;
   }
+  /**
+   * @brief Update all global variable value from json format config
+   *
+   * @param js Input json object
+   */
   static void loadAllVariables(nlohmann::json& js) {
     WINDOW_WIDTH = js["WINDOW_WIDTH"];
     WINDOW_HEIGHT = js["WINDOW_HEIGHT"];
@@ -53,9 +80,6 @@ class ConfigUtil {
     SCREEN_TICKS_PER_FRAME_60 = 1000 / SCREEN_FPS_60;
 
     TICKS_PER_UPDATE = js["TICKS_PER_UPDATE"];
-
-    // FONT_PIXELGAME_PATH = js["FONT_PIXELGAME_PATH"];
-    // FONT_WQY_PATH = js["FONT_WQY_PATH"];
   }
 };
 

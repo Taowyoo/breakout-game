@@ -1,9 +1,20 @@
+/**
+ * @file Common.h
+ * @author Yuxiang Cao (cao.yux@northeastern.edu)
+ * @brief Header file to declare all global variables
+ * @version 1.0.0
+ * @date 2021-02-22 22:52:41 -08:00
+ *
+ * @copyright Copyright (c) 2021
+ *
+ */
 #ifndef COMMON_H_
 #define COMMON_H_
 
 #include <string>
 
 #include "TinyMath.hpp"
+
 extern int WINDOW_WIDTH;
 extern int WINDOW_HEIGHT;
 
@@ -30,36 +41,60 @@ extern int BRICK_COLUMN;
 extern int BRICK_DEFAULT_SCORE;
 extern int PLAYER_DEFAULT_LIFE_NUM;
 
+/// Default begin level
 extern int DEFAULT_LEVEL;
 
 extern int DEFAULT_FONT_SIZE;
 extern int MENU_FONT_SIZE;
 
 extern int SCREEN_FPS_60;
+/// Milliseconds between each frame update when fps is 60
 extern int SCREEN_TICKS_PER_FRAME_60;
-// Fixed update speed
+/// Milliseconds between each update
 extern int TICKS_PER_UPDATE;
 
+/**
+ * @brief Indicate paddle moving state
+ *
+ */
 enum Buttons {
-  PaddleLeft = 0,
-  PaddleRight,
+  PaddleLeft = 0,  ///< Paddle is moving left
+  PaddleRight,     ///< Paddle is moving right
 };
 
+/**
+ * @brief Game state Enum
+ *
+ */
 enum GameState {
-  Initializing,
-  Running,
-  PauseNormal,
-  PauseWin,
-  PauseClearGame,
-  PauseLoseGame,
-  PauseLoseLife
+  Initializing,    ///< Game is under initialization
+  Running,         ///< Game is running
+  PauseNormal,     ///< Game paused normally
+  PauseWin,        ///< Game paused because player just finish one level
+  PauseClearGame,  ///< Game paused because player finished all levels
+  PauseLoseGame,   ///< Game paused because player lose all lives
+  PauseLoseLife    ///< Game paused because player lose one life
 };
 
-enum class CollisionType { None, Top, Middle, Bottom, Left, Right };
-
+/**
+ * @brief Collision direction
+ *
+ */
+enum class CollisionType {
+  None,    ///< No collision happened
+  Top,     ///< Ball is now moving towards top
+  Middle,  ///< Ball hit the middle of the paddle
+  Bottom,  ///< Ball is now moving towards bottom
+  Left,    ///< Ball is now moving towards left
+  Right    ///< Ball is now moving towards right
+};
+/**
+ * @brief Collision info struct
+ *
+ */
 struct Contact {
-  CollisionType type;
-  Vector2D penetration;
+  CollisionType type;    ///< Collision direction
+  Vector2D penetration;  ///< How much the ball has penetrated in hitted object
 };
 
 #endif  // COMMON_H_
