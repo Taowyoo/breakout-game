@@ -8,8 +8,9 @@
 
 
 
-1. *edit your response*
-2. *edit your response*
-3. *edit your response*
-4. *edit your response*
-5. *edit your response*
+1. Graphic component: Store and show object texture
+2. Collision component: Collision detection; store object shape for collision
+3. Sound component: Play sound effect
+4. Gameplay component: Store gameplay info
+5. Camera component: Game Camera
+6. Transform/position component: Maintain position of the object
