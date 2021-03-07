@@ -1,24 +1,15 @@
-#ifndef TILE_H
-#define TILE_H
+#ifndef TILEMAPGRAPHICSCOMPONENT_HPP
+#define TILEMAPGRAPHICSCOMPONENT_HPP
 
-#include <string>
-
-#include "GraphicsEngineRenderer.hpp"
-
-/**
- * This is a minimal implementation of a TileMap
- */
-class TileMap {
+#include "GraphicsComponent.hpp"
+class TileMapGraphicsComponent : public GraphicsComponent {
  public:
-  /**
-   * Constructor for a tilemap
-   */
-  TileMap(std::string tileSheetFileName, int rows, int cols, int _TileWidth,
-          int _TileHeight, int _mapX, int _mapY, SDL_Renderer* ren);
-  /**
-   * Destructor for a tilemap
-   */
-  ~TileMap();
+  TileMapGraphicsComponent(SDL_Renderer* g_renderer, TransformComponent* tf,
+                           int rows, int cols, int _TileWidth, int _TileHeight,
+                           int _mapX, int _mapY);
+  virtual ~TileMapGraphicsComponent();
+  virtual void update();
+  virtual void Render();
   /**
    * Temporary function for generating a simple
    * map to display some tiles
@@ -36,12 +27,8 @@ class TileMap {
    * Return the tile type at an x and y position
    */
   int GetTileType(int x, int y);
-  /**
-   * Draw all of the tiles in the tilemap
-   */
-  void Render(SDL_Renderer* ren);
 
- private:
+ protected:
   // Dimensions of our TileMap and individual tiles.
   // Used for spiltting up the sprite sheet
   int m_Rows;
@@ -52,10 +39,6 @@ class TileMap {
   // size of our tilemap
   int m_MapX;
   int m_MapY;
-  // Where our TileMap is rendered
-  // An SDL Surface contains pixel data to draw our TileMap
-  SDL_Surface* m_TileSpriteSheet;
-  SDL_Texture* m_Texture;
   // Stores our tile types
   int* m_Tiles;
 };

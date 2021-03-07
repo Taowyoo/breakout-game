@@ -7,17 +7,14 @@
 
 class GameObject {
  public:
-  GameObject();
+  GameObject() = default;
   ~GameObject();
-
-  // Note: You may want to add member functions like 'Update' or 'Render'
-  // Note: You may want to add member functions like "AddComponent" or
-  // "RemoveComponent"
-  bool AddComponent(const Component& new_component);
-  bool RemoveComponent();
+  void AddComponent(Component* new_component);
+  bool RemoveComponent(int idx);
+  void update();
 
  private:
-  std::vector<Component> m_components;
+  std::vector<Component*> m_components;
 };
 
 #endif
