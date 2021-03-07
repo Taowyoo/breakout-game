@@ -1,16 +1,16 @@
-#ifndef CONTROLLERCOMPONENT_HPP 
+#ifndef CONTROLLERCOMPONENT_HPP
 #define CONTROLLERCOMPONENT_HPP
 
 #include "Component.hpp"
+#include "TransformComponent.hpp"
+class ControllerComponent : public Component {
+ public:
+  ControllerComponent(TransformComponent* tf) : transform{tf} {};
+  virtual ~ControllerComponent(){};
+  virtual void update() = 0;
 
-class ControllerComponent : public Component{
-    public:
-        ControllerComponent();
-        ~ControllerComponent();
-
-    private:
-
+ protected:
+  TransformComponent* transform;
 };
-
 
 #endif

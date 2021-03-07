@@ -5,17 +5,16 @@
 
 #include "Component.hpp"
 
-class GameObject{
-    public:
-        GameObject();
-        ~GameObject();
+class GameObject {
+ public:
+  GameObject() = default;
+  ~GameObject();
+  void AddComponent(Component* new_component);
+  bool RemoveComponent(int idx);
+  void update();
 
-    // Note: You may want to add member functions like 'Update' or 'Render'
-    // Note: You may want to add member functions like "AddComponent" or "RemoveComponent"
-    
-    private:
-        std::vector<Component> m_components;
+ private:
+  std::vector<Component*> m_components;
 };
-
 
 #endif
