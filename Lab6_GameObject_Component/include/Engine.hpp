@@ -8,8 +8,11 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-
+#include <vector>
 #include "GraphicsEngineRenderer.hpp"
+#include "GameObject.hpp"
+// Try toggling this number!
+#define OBJECT_NUM 2
 
 /**
  * This class sets up the main game engine
@@ -60,6 +63,7 @@ class Engine {
   // Engine Subsystem
   // Setup the Graphics Rendering Engine
   GraphicsEngineRenderer* m_renderer = nullptr;
+  std::vector<GameObject> gameObjects;
 };
 
 #endif
