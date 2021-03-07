@@ -1,14 +1,12 @@
-#ifndef COMPONENT_HPP 
+#ifndef COMPONENT_HPP
 #define COMPONENT_HPP
 
-class Component{
-    public:
-        Component();
-        ~Component();
+class Component {
+ public:
+  Component();
+  ~Component();
 
-    private:
-
+ private:
 };
-
 
 #endif
