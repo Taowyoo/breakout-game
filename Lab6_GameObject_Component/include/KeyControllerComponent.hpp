@@ -7,9 +7,10 @@ class KeyControllerComponent : public ControllerComponent {
   KeyControllerComponent(TransformComponent* tf) : ControllerComponent{tf} {};
   virtual ~KeyControllerComponent(){};
   virtual void update();
-
+  
  protected:
-  int accelerate = 1;
+ bool handleEvent(SDL_Event* event);
+  int accelerate = 5;
 };
 
 #endif

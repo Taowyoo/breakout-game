@@ -31,10 +31,13 @@ void Engine::Input(bool* quit) {
   // that are related to input and output
   SDL_Event e;
   // Handle events on queue
+  
   while (SDL_PollEvent(&e) != 0) {
     // User posts an event to quit
     // An example is hitting the "x" in the corner of the window.
-    if (e.type == SDL_QUIT) {
+    // printf("Input SDL_PollEvent one\n");
+    
+    if (e.type == SDL_QUIT || e.key.keysym.sym == SDLK_q || e.key.keysym.sym == SDLK_ESCAPE) {
       *quit = true;
     }
   }
@@ -71,7 +74,6 @@ void Engine::MainGameLoop() {
     Update();
     // Check input for quiting game
     Input(&quit);
-
     SDL_Delay(250);
   }
   // Disable text input
@@ -81,9 +83,9 @@ void Engine::MainGameLoop() {
 void Engine::Start() {
   // Report which subsystems are being initialized
   if (m_renderer != nullptr) {
-    std::cout << "Initializing Graphics Subsystem\n";
+    SDL_Log("Initializing Graphics Subsystem") ;
   } else {
-    std::cout << "No Graphics Subsystem initialized\n";
+    SDL_Log("No Graphics Subsystem initialized") ;
   }
 
   // Setup Sprite
@@ -122,4 +124,5 @@ void Engine::InitializeGraphicsSubSystem() {
     SDL_Log("Failed to init GraphicsEngineRenderer");
     exit(1);  // Terminate program if renderer cannot be created.
   }
+  SDL_Log("Succeed to init GraphicsEngineRenderer");
 }
