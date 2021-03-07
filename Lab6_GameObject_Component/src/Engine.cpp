@@ -1,6 +1,6 @@
 #include "Engine.hpp"
 
-#include "GameObject.hpp"
+
 #include "KeyControllerComponent.hpp"
 #include "SpriteGraphicsComponent.hpp"
 #include "TileMapGraphicsComponent.hpp"
@@ -11,16 +11,14 @@
 #include <memory>
 #include <string>
 
-// Try toggling this number!
-#define OBJECT_NUM 2
 
-// Global array to create our game objects
-GameObject gameObjects[OBJECT_NUM];
 
 // Initialization function
 // Returns a true or false value based on successful completion of setup.
 // Takes in dimensions of window.
-Engine::Engine() {}
+Engine::Engine() {
+  gameObjects.resize(OBJECT_NUM);
+}
 
 // Proper shutdown and destroy initialized objects
 Engine::~Engine() {}
@@ -74,7 +72,7 @@ void Engine::MainGameLoop() {
     Update();
     // Check input for quiting game
     Input(&quit);
-    SDL_Delay(250);
+    SDL_Delay(150);
   }
   // Disable text input
   SDL_StopTextInput();
